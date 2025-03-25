@@ -7,8 +7,6 @@ import { DefaultFooter } from "./defaultFooter";
 export function Footer() {
   const pathname = usePathname();
 
-  console.log("######### pathname ############", pathname);
-
   if (pathname === "/") {
     return <HomeFooter />;
   }
