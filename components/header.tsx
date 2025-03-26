@@ -6,13 +6,19 @@ export function Header() {
       <nav className="text-white">
         <ul className="flex gap-4">
           <li>
-            <Link href="/">Início</Link>
+            <Link className="font-lores-12 font-normal" href="/">
+              Início
+            </Link>
           </li>
           <li>
-            <Link href="/about">Sobre</Link>
+            <Link className="font-lores-12 font-normal" href="/about">
+              Sobre
+            </Link>
           </li>
           <li>
-            <Link href="/contact">Blog</Link>
+            <Link className="font-lores-12 font-normal" href="/contact">
+              Blog
+            </Link>
           </li>
         </ul>
       </nav>
