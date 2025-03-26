@@ -71,17 +71,17 @@ const cards: Card[] = [
 export default function Blog() {
   return (
     <>
-      <h1 className="text-3xl mb-8 md:mb-16 md:mt-20">Articles</h1>
-      <div className="max-w-5xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-        <div className="flex flex-col lg:flex-row md:col-span-2 lg:col-span-3 min-h-72 gap-12 cursor-pointer">
+      {/* <h1 className="text-3xl mb-8 md:mb-16 md:mt-20">Articles</h1> */}
+      <div className="max-w-5xl grid grid-cols-1 md:grid-cols-2 justify-items-center lg:grid-cols-3 gap-12 lg:mt-14">
+        <div className="flex max-w-[21rem] md:max-w-full flex-col lg:flex-row md:col-span-2 lg:col-span-3 cursor-pointer">
           <Image
             src="/image-tmp.avif"
-            className="rounded-3xl md:rounded-2xl w-full"
+            className="rounded-3xl mb-6 md:rounded-2xl w-full lg:w-auto lg:mb-0 lg:mr-12"
             alt="Blog Image"
             width={471}
             height={349}
           />
-          <div className="p-3">
+          <div className="p-2">
             <span className="text-sm md:text-base font-lores-12">
               {featuredCard.category}
             </span>
@@ -96,19 +96,24 @@ export default function Blog() {
         {cards
           .filter((card) => !card.featured)
           .map((card) => (
-            <div className="h-[430px] max-w-96 cursor-pointer" key={card.key}>
+            <div
+              className="h-[27rem] max-w-[21rem] cursor-pointer"
+              key={card.key}
+            >
               <Image
                 src="/image-tmp.avif"
-                className="rounded-3xl mb-8 w-full"
+                className="rounded-3xl mb-6 w-full"
                 alt="Blog Image"
                 width={321}
                 height={249}
               />
-              <span className="text-sm font-lores-12">{card.category}</span>
-              <h2 className="text-lg font-bold leading-6 mt-5 mb-6">
-                {card.title}
-              </h2>
-              <p className="text-base text-neutral-400">{card.description}</p>
+              <div className="p-2">
+                <span className="text-sm font-lores-12">{card.category}</span>
+                <h2 className="text-lg font-bold leading-6 mt-5 mb-6">
+                  {card.title}
+                </h2>
+                <p className="text-base text-neutral-400">{card.description}</p>
+              </div>
             </div>
           ))}
       </div>
