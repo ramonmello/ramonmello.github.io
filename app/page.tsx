@@ -3,7 +3,7 @@ import Image from "next/image";
 export default function Home() {
   return (
     <div className="flex flex-col w-full justify-between">
-      <h1 className="text-8xl font-bold md:text-9xl">Ramon</h1>
+      <h1 className="text-8xl font-bold md:text-9xl leading-20">Ramon</h1>
       <div className="inline-flex items-center">
         <Image
           className="rounded-full object-cover h-24 -ml-1"
@@ -15,6 +15,9 @@ export default function Home() {
         />
         <h1 className="text-8xl font-bold md:text-9xl">Mello</h1>
       </div>
+      <span className="font-lores-12 self-end text-lg w-full text-end mr-2">
+        * Front-end Developer
+      </span>
     </div>
   );
 }
