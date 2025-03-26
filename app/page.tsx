@@ -6,7 +6,7 @@ export default function Home() {
       <h1 className="text-8xl font-bold md:text-9xl">Ramon</h1>
       <div className="inline-flex items-center">
         <Image
-          className="rounded-full object-cover h-24 mr-3"
+          className="rounded-full object-cover h-24 -ml-1"
           aria-hidden
           src="/ramon-avatar.jpg"
           alt="Fotografia Ramon Mello"

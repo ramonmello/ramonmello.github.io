@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { StarCanvas } from "@/components/star-canvas";
 import { Layout } from "@/components/layout";
-import Head from "next/head";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,9 +15,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Head>
-        <link rel="stylesheet" href="https://use.typekit.net/arv6uhj.css" />
-      </Head>
       <body className="antialiased">
         <StarCanvas />
         <Layout>{children}</Layout>
