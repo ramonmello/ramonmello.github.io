@@ -16,8 +16,18 @@ export function Header() {
             </Link>
           </li>
           <li>
-            <Link className="font-lores-12 font-normal" href="/contact">
+            <Link className="font-lores-12 font-normal" href="/blog">
               Blog
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="font-lores-12 font-normal"
+              href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Contato
             </Link>
           </li>
         </ul>
