@@ -20,7 +20,7 @@ export function Header() {
               Blog
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               className="font-lores-12 font-normal"
               href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
@@ -29,7 +29,7 @@ export function Header() {
             >
               Contato
             </Link>
-          </li>
+          </li> */}
         </ul>
       </nav>
     </header>
