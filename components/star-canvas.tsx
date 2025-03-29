@@ -38,7 +38,7 @@ export function StarCanvas() {
       starArray.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        radius: Math.random() * 1.5,
+        radius: Math.random() * 3,
         opacity: Math.random(),
         direction: Math.random() < 0.5 ? -1 : 1,
         speed: Math.random() * 0.01 + 0.005,
