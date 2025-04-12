@@ -72,7 +72,7 @@ export default function Blog() {
   return (
     <>
       {/* <h1 className="text-3xl mb-8 md:mb-16 md:mt-20">Articles</h1> */}
-      <div className="max-w-5xl grid grid-cols-1 md:grid-cols-2 justify-items-center lg:grid-cols-3 gap-12 lg:mt-14">
+      <div className="max-w-6xl grid grid-cols-1 md:grid-cols-2 justify-items-center lg:grid-cols-3 gap-12 lg:mt-14">
         <div className="flex max-w-[21rem] md:max-w-full flex-col lg:flex-row md:col-span-2 lg:col-span-3 cursor-pointer">
           <Image
             src="/image-tmp.avif"
