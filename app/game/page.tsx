@@ -1,30 +1,38 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-// import { start, stop } from "@/engine/legacyEngine";
 
 export default function GamePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    let stopFn: (() => void) | undefined;
     let cancelled = false;
 
     (async () => {
-      const engine = await import("@/engine/legacyEngine");
-      if (cancelled) return; // já saiu do componente
-      stopFn = engine.start(canvasRef.current!);
+      const engine = await import("@/engine");
+      if (cancelled) return;
+      engine.start(canvasRef.current!);
     })();
 
     return () => {
       cancelled = true;
-      stopFn?.(); // chama o stop exato
+      import("@/engine")
+        .then((engine) => {
+          engine.stop();
+        })
+        .catch((err) => {
+          console.error("Failed to stop game engine:", err);
+        });
     };
   }, []);
 
   return (
     <>
-      <canvas id="gameCanvas" ref={canvasRef} className="fixed inset-0 block" />
+      <canvas
+        id="gameCanvas"
+        ref={canvasRef}
+        className="fixed z-10 inset-0 block"
+      />
 
       {/* HUD – Tailwind em vez de CSS inline */}
       <div
@@ -50,9 +58,6 @@ export default function GamePage() {
           Play Again
         </button>
       </div>
-
-      {/* Carrega o main.js exatamente como no HTML antigo */}
-      {/* <Script src="/main.js" strategy="afterInteractive" /> */}
     </>
   );
 }
