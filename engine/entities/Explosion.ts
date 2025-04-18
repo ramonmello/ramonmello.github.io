@@ -1,44 +1,28 @@
+// src/engine/entities/Explosion.ts
+
+import { getWebGLContext } from "../core/WebGLContext";
+
 /**
- * Explosion.ts - Define as explosões quando objetos são destruídos
+ * Explosion — efeito de explosão com partículas
  */
-
-import {
-  gl,
-  program,
-  positionAttributeLocation,
-  resolutionUniformLocation,
-  translationUniformLocation,
-  rotationUniformLocation,
-  colorUniformLocation,
-  positionBuffer,
-  canvas,
-} from "../core/WebGLContext";
-import { Position, Velocity } from "./Projectile";
-
-// Interface para partículas de explosão
-interface Particle {
-  x: number;
-  y: number;
-  velocity: Velocity;
-  size: number;
-}
-
 export class Explosion {
-  position: Position;
-  lifeTime: number;
-  maxLifeTime: number;
-  particles: Particle[];
-  numParticles: number;
+  private position: { x: number; y: number };
+  private lifeTime = 0;
+  private readonly maxLifeTime = 60;
+  private readonly particles: {
+    x: number;
+    y: number;
+    velocity: { x: number; y: number };
+    size: number;
+  }[] = [];
 
   constructor(x: number, y: number) {
+    const numParticles = 20;
     this.position = { x, y };
-    this.lifeTime = 0;
-    this.maxLifeTime = 60;
-    this.particles = [];
-    this.numParticles = 20;
 
-    for (let i = 0; i < this.numParticles; i++) {
-      const angle = (Math.PI * 2 * i) / this.numParticles;
+    // inicializa partículas com direções e tamanhos aleatórios
+    for (let i = 0; i < numParticles; i++) {
+      const angle = (Math.PI * 2 * i) / numParticles;
       const speed = 1 + Math.random() * 2;
       this.particles.push({
         x: 0,
@@ -52,56 +36,48 @@ export class Explosion {
     }
   }
 
+  /** Atualiza posição e envelhecimento das partículas */
   update(): boolean {
     this.lifeTime++;
 
-    this.particles.forEach((particle) => {
-      particle.x += particle.velocity.x;
-      particle.y += particle.velocity.y;
-      particle.velocity.x *= 0.95;
-      particle.velocity.y *= 0.95;
+    // move cada partícula e aplica desaceleração
+    this.particles.forEach((p) => {
+      p.x += p.velocity.x;
+      p.y += p.velocity.y;
+      p.velocity.x *= 0.95;
+      p.velocity.y *= 0.95;
     });
 
+    // devolve true quando a explosão terminou
     return this.lifeTime >= this.maxLifeTime;
   }
 
+  /** Desenha todas as partículas com opacidade decrescente */
   draw(): void {
-    gl.useProgram(program);
+    const { gl, canvas, positionBuffer, locs } = getWebGLContext();
     const opacity = 1 - this.lifeTime / this.maxLifeTime;
 
-    this.particles.forEach((particle) => {
-      const vertices = new Float32Array([
-        -particle.size,
-        -particle.size,
-        particle.size,
-        -particle.size,
-        -particle.size,
-        particle.size,
-        particle.size,
-        particle.size,
-      ]);
+    this.particles.forEach((p) => {
+      // quad para cada partícula
+      const s = p.size;
+      const vertices = new Float32Array([-s, -s, s, -s, -s, s, s, s]);
 
-      gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
+      gl.useProgram(locs.program);
+      gl.uniform2f(locs.u_resolution, canvas.width, canvas.height);
       gl.uniform2f(
-        translationUniformLocation,
-        this.position.x + particle.x,
-        this.position.y + particle.y
+        locs.u_translation,
+        this.position.x + p.x,
+        this.position.y + p.y
       );
-      gl.uniform1f(rotationUniformLocation, 0);
-      gl.uniform4f(colorUniformLocation, 1, 1, 1, opacity);
+      gl.uniform1f(locs.u_rotation, 0);
+      gl.uniform4f(locs.u_color, 1, 1, 1, opacity);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-      gl.enableVertexAttribArray(positionAttributeLocation);
-      gl.vertexAttribPointer(
-        positionAttributeLocation,
-        2,
-        gl.FLOAT,
-        false,
-        0,
-        0
-      );
+      gl.enableVertexAttribArray(locs.a_position);
+      gl.vertexAttribPointer(locs.a_position, 2, gl.FLOAT, false, 0, 0);
 
+      // desenha como TRIANGLE_STRIP para formar um quadrado
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     });
   }

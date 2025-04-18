@@ -1,30 +1,43 @@
+// src/engine/utils/collisions.ts
+
 /**
- * collisions.ts - Funções para detectar colisões entre entidades
+ * Utilitários de colisão para o jogo.
  */
 
-import { Ship } from "../entities/Ship";
-import { Asteroid } from "../entities/Asteroid";
-import { Projectile } from "../entities/Projectile";
+/** Vetor 2D genérico */
+export interface Vec2 {
+  x: number;
+  y: number;
+}
 
-// Verifica colisão entre nave e asteroide
-export function checkCollision(ship: Ship, asteroid: Asteroid): boolean {
-  const dx = ship.position.x - asteroid.position.x;
-  const dy = ship.position.y - asteroid.position.y;
-  const distance = Math.sqrt(dx * dx + dy * dy);
-
+/**
+ * Verifica colisão entre a nave e um asteroide.
+ * - Ship agora expõe `pos: Vec2`
+ * - Asteroid expõe `position: Vec2` e `size: number`
+ */
+export function checkCollision(
+  ship: { pos: Vec2 },
+  asteroid: { position: Vec2; size: number }
+): boolean {
+  const dx = ship.pos.x - asteroid.position.x;
+  const dy = ship.pos.y - asteroid.position.y;
+  const distance = Math.hypot(dx, dy);
   const shipRadius = 15;
   return distance < shipRadius + asteroid.size;
 }
 
-// Verifica colisão entre projétil e asteroide
+/**
+ * Verifica colisão entre um projétil e um asteroide.
+ * - Projectile agora expõe `pos: Vec2`
+ * - Asteroid expõe `position: Vec2` e `size: number`
+ */
 export function checkProjectileAsteroidCollision(
-  projectile: Projectile,
-  asteroid: Asteroid
+  projectile: { pos: Vec2 },
+  asteroid: { position: Vec2; size: number }
 ): boolean {
-  const dx = projectile.position.x - asteroid.position.x;
-  const dy = projectile.position.y - asteroid.position.y;
-  const distance = Math.sqrt(dx * dx + dy * dy);
-
+  const dx = projectile.pos.x - asteroid.position.x;
+  const dy = projectile.pos.y - asteroid.position.y;
+  const distance = Math.hypot(dx, dy);
   const projectileRadius = 1;
   return distance < projectileRadius + asteroid.size;
 }

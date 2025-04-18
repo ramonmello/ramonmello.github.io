@@ -1,28 +1,28 @@
-/**
- * index.ts - Ponto de entrada para o engine do jogo
- * Exporta as funções principais para iniciar e parar o jogo
- */
+// src/engine/index.ts
 
 import { initWebGLContext } from "./core/WebGLContext";
 import { startEngine, stopEngine } from "./core/Engine";
 
-// Função para iniciar o jogo
-export async function start(
-  canvasElement: HTMLCanvasElement
-): Promise<() => void> {
-  try {
-    // Inicializa o contexto WebGL
-    await initWebGLContext(canvasElement);
+let disposer: (() => void) | undefined;
 
-    // Inicia o motor do jogo
-    return startEngine();
-  } catch (error) {
-    console.error("Error starting game engine:", error);
-    return () => {}; // Retorna uma função vazia em caso de erro
-  }
+/**
+ * Inicia o jogo:
+ * 1) cria o contexto WebGL (singleton)
+ * 2) carrega e compila os shaders
+ * 3) chama startEngine() que inicia o loop
+ */
+export async function start(canvasEl: HTMLCanvasElement) {
+  await initWebGLContext(canvasEl); // já traz shaders prontos
+  disposer = await startEngine();
+  return () => {
+    disposer?.();
+    stopEngine();
+  };
 }
 
-// Função para parar o jogo
+/**
+ * Para o motor e limpa listeners
+ */
 export function stop(): void {
   stopEngine();
 }

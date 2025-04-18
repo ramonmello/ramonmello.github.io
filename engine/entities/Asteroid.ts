@@ -1,27 +1,17 @@
+// src/engine/entities/Asteroid.ts
+
+import { getWebGLContext } from "../core/WebGLContext";
+
 /**
- * Asteroid.ts - Define os asteroides do jogo
+ * Asteroid — representa um asteroide no jogo
  */
-
-import {
-  gl,
-  program,
-  positionAttributeLocation,
-  resolutionUniformLocation,
-  translationUniformLocation,
-  rotationUniformLocation,
-  colorUniformLocation,
-  positionBuffer,
-  canvas,
-} from "../core/WebGLContext";
-import { Position, Velocity } from "./Projectile";
-
 export class Asteroid {
-  position: Position;
-  size: number;
-  rotation: number;
-  rotationSpeed: number;
-  velocity: Velocity;
-  vertices: Float32Array;
+  public position: { x: number; y: number };
+  public size: number;
+  private rotation: number;
+  private rotationSpeed: number;
+  private velocity: { x: number; y: number };
+  private vertices: Float32Array;
 
   constructor(x: number, y: number, size = 30) {
     this.position = { x, y };
@@ -39,23 +29,25 @@ export class Asteroid {
     this.vertices = this.generateVertices();
   }
 
-  generateVertices(): Float32Array {
-    const vertices = [];
+  /** Gera os vértices irregulares do asteroide */
+  private generateVertices(): Float32Array {
+    const points: number[] = [];
     const numPoints = 8;
     const angleStep = (Math.PI * 2) / numPoints;
 
     for (let i = 0; i < numPoints; i++) {
       const angle = i * angleStep;
       const radius = this.size * (0.8 + Math.random() * 0.4);
-      const x = Math.cos(angle) * radius;
-      const y = Math.sin(angle) * radius;
-      vertices.push(x, y);
+      points.push(Math.cos(angle) * radius, Math.sin(angle) * radius);
     }
 
-    return new Float32Array(vertices);
+    return new Float32Array(points);
   }
 
+  /** Atualiza posição, rotação e wrapping na borda */
   update(): void {
+    const { canvas } = getWebGLContext();
+
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
     this.rotation += this.rotationSpeed;
@@ -70,47 +62,61 @@ export class Asteroid {
       this.position.y = -this.size;
   }
 
+  /** Desenha o asteroide usando o contexto WebGL singleton */
   draw(): void {
-    gl.useProgram(program);
+    const ctx = getWebGLContext();
+    const { gl, positionBuffer, locs, canvas } = ctx;
 
-    gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
-    gl.uniform2f(translationUniformLocation, this.position.x, this.position.y);
-    gl.uniform1f(rotationUniformLocation, this.rotation);
-    gl.uniform4f(colorUniformLocation, 0.8, 0.8, 0.8, 1);
+    // 🔧 Guard: locs só existe após initShaders()
+    if (!locs || !locs.program) {
+      throw new Error(
+        "WebGLContext.locs não inicializado. " +
+          "Certifique‑se de chamar initShaders() antes de qualquer draw()."
+      );
+    }
+
+    gl.useProgram(locs.program);
+    gl.uniform2f(locs.u_resolution, canvas.width, canvas.height);
+    gl.uniform2f(locs.u_translation, this.position.x, this.position.y);
+    gl.uniform1f(locs.u_rotation, this.rotation);
+    gl.uniform4f(locs.u_color, 0.8, 0.8, 0.8, 1);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, this.vertices, gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(positionAttributeLocation);
-    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(locs.a_position);
+    gl.vertexAttribPointer(locs.a_position, 2, gl.FLOAT, false, 0, 0);
 
     gl.drawArrays(gl.LINE_LOOP, 0, this.vertices.length / 2);
   }
 
-  // Cria um asteroide fora da tela
-  static createOutsideCanvas(): Asteroid {
+  /**
+   * Cria um asteroide fora da tela, em uma das quatro bordas
+   */
+  static createOutsideCanvas(size = 30): Asteroid {
+    const { canvas } = getWebGLContext();
     const side = Math.floor(Math.random() * 4);
-    let x = 0,
-      y = 0;
+    let x: number, y: number;
 
     switch (side) {
-      case 0: // top
+      case 0: // topo
         x = Math.random() * canvas.width;
-        y = -30;
+        y = -size;
         break;
-      case 1: // right
-        x = canvas.width + 30;
+      case 1: // direita
+        x = canvas.width + size;
         y = Math.random() * canvas.height;
         break;
       case 2: // bottom
         x = Math.random() * canvas.width;
-        y = canvas.height + 30;
+        y = canvas.height + size;
         break;
-      case 3: // left
-        x = -30;
+      case 3: // esquerda
+      default:
+        x = -size;
         y = Math.random() * canvas.height;
         break;
     }
 
-    return new Asteroid(x, y);
+    return new Asteroid(x, y, size);
   }
 }

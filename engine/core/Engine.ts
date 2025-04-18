@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
- * Engine.ts - Gerencia o loop principal do jogo e atualização de estado
+ * Engine.ts — gerencia o loop do jogo, update e render
  */
 
-import { canvas, gl } from "./WebGLContext";
-import { Ship, ShipTrail } from "../entities/Ship";
+import { getWebGLContext } from "./WebGLContext";
+import { Ship } from "../entities/Ship";
+import { ShipTrail } from "../entities/ShipTrail";
 import { Projectile } from "../entities/Projectile";
 import { Asteroid } from "../entities/Asteroid";
 import { Explosion } from "../entities/Explosion";
@@ -13,104 +14,79 @@ import {
   checkProjectileAsteroidCollision,
 } from "../utils/collisions";
 import {
-  spacePressed,
-  resetSpacePressed,
-  initInputControls,
+  attachInputControls,
+  detachInputControls,
+  consumeSpacePressed,
 } from "../utils/input";
 
-// Estado do jogo
+// estado do jogo
 let ship: Ship;
 let projectiles: Projectile[] = [];
 let asteroids: Asteroid[] = [];
 let explosions: Explosion[] = [];
 let asteroidsDestroyed = 0;
 
-// Controle do requestAnimationFrame
+// requestAnimationFrame
 let rafId: number | null = null;
 
-// Flag para indicar se o motor está em execução
+// Flag para singleton
 const RUNNING_FLAG = "__engineRunning" as const;
 
-// Atualiza o contador de asteroides destruídos na UI
-function updateAsteroidCounter(): void {
-  const counterElement = document.getElementById("asteroidCounter");
-  if (counterElement) {
-    counterElement.textContent = `Score: ${asteroidsDestroyed}`;
-  }
+// atualiza o contador no HUD
+function updateAsteroidCounter() {
+  const el = document.getElementById("asteroidCounter");
+  if (el) el.textContent = `Score: ${asteroidsDestroyed}`;
 }
 
-// Mostra a mensagem de game over
-function showGameOver(): void {
-  const gameOverMessage = document.getElementById("gameOverMessage");
-  if (gameOverMessage?.style) {
-    if (gameOverMessage.style.display !== "block") {
-      const gameOverScore = document.getElementById("gameOverScore");
-      if (gameOverScore) {
-        gameOverScore.textContent = `Score: ${asteroidsDestroyed}`;
-      }
-      gameOverMessage.style.display = "block";
-    }
-  }
+// exibe overlay de Game Over
+function showGameOver() {
+  const el = document.getElementById("gameOverMessage");
+  if (!el || el.style.display === "block") return;
+  const scoreEl = document.getElementById("gameOverScore");
+  if (scoreEl) scoreEl.textContent = `Score: ${asteroidsDestroyed}`;
+  el.style.display = "block";
 }
 
-// Atualiza o estado do jogo
-function updateGame(): void {
+// realiza lógica de update a cada frame
+function updateGame() {
   ship.update();
 
-  if (spacePressed) {
-    const newProjectile = ship.shoot();
-    if (newProjectile) {
-      projectiles.push(newProjectile);
-    }
-    resetSpacePressed();
+  // tiro único por pulso
+  if (consumeSpacePressed()) {
+    const p = ship.shoot();
+    if (p) projectiles.push(p);
   }
 
-  projectiles = projectiles.filter((proj) => !proj.update());
-  asteroids.forEach((asteroid) => asteroid.update());
-  explosions = explosions.filter((explosion) => !explosion.update());
+  projectiles = projectiles.filter((p) => !p.update());
+  asteroids.forEach((a) => a.update());
+  explosions = explosions.filter((e) => !e.update());
 
   if (!ship.isDestroyed) {
-    for (const asteroid of asteroids) {
-      if (checkCollision(ship, asteroid)) {
-        const explosion = ship.destroy();
-        if (explosion) {
-          explosions.push(explosion);
-        }
+    for (const a of asteroids) {
+      if (checkCollision(ship, a)) {
+        ship.destroy();
+        explosions.push(new Explosion(a.position.x, a.position.y));
         break;
       }
     }
   }
 
+  // colisões projétil x asteroide
   for (let i = projectiles.length - 1; i >= 0; i--) {
-    const projectile = projectiles[i];
-    let projectileHit = false;
-
+    const p = projectiles[i];
     for (let j = asteroids.length - 1; j >= 0; j--) {
-      const asteroid = asteroids[j];
-
-      if (
-        checkProjectileAsteroidCollision(projectile, asteroid) &&
-        !ship.isDestroyed
-      ) {
+      const a = asteroids[j];
+      if (checkProjectileAsteroidCollision(p, a) && !ship.isDestroyed) {
         projectiles.splice(i, 1);
-        projectileHit = true;
-
-        explosions.push(
-          new Explosion(asteroid.position.x, asteroid.position.y)
-        );
+        explosions.push(new Explosion(a.position.x, a.position.y));
         asteroids.splice(j, 1);
         asteroidsDestroyed++;
         updateAsteroidCounter();
-
-        // Adiciona dois novos asteroides para aumentar a dificuldade
         asteroids.push(Asteroid.createOutsideCanvas());
         asteroids.push(Asteroid.createOutsideCanvas());
-
         break;
       }
     }
-
-    if (projectileHit) break;
   }
 
   if (ship.isDestroyed) {
@@ -118,114 +94,97 @@ function updateGame(): void {
   }
 }
 
-// Renderiza o jogo
-function renderGame(): void {
+// renderiza a cena
+function renderGame() {
+  const { gl } = getWebGLContext();
   gl.clear(gl.COLOR_BUFFER_BIT);
-
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-  // Desenha o rastro da nave
-  if (ship.trailPositions.length > 0) {
-    ship.trailPositions.forEach((pos, index) => {
-      const opacity = 0.3 - index / ship.trailPositions.length;
-      const trail = new ShipTrail(pos.x, pos.y, pos.rotation, opacity);
-      trail.draw();
-    });
-  }
+  // rastro
+  ship.trailPositions.forEach((t, idx) => {
+    const opacity = Math.max(0, 0.3 - idx / ship.trailPositions.length);
+    new ShipTrail(t.x, t.y, t.rotation, opacity).draw();
+  });
 
-  // Desenha todos os elementos do jogo
-  asteroids.forEach((asteroid) => asteroid.draw());
+  // desenha
+  asteroids.forEach((a) => a.draw());
   ship.draw();
-  projectiles.forEach((proj) => proj.draw());
-  explosions.forEach((explosion) => explosion.draw());
+  projectiles.forEach((p) => p.draw());
+  explosions.forEach((e) => e.draw());
 }
 
-// Loop principal do jogo
-function gameLoop(): void {
+// loop recursivo
+function gameLoop() {
   updateGame();
   renderGame();
   rafId = requestAnimationFrame(gameLoop);
 }
 
-// Inicializa o jogo
-function initGame(): void {
-  // Inicializa controles de entrada
-  initInputControls();
+// inicializa entidades e listeners (contexto já existe)
+function initGame() {
+  const { canvas } = getWebGLContext();
 
-  // Cria a nave no centro da tela
   ship = new Ship(canvas.width / 2, canvas.height / 2);
-
-  // Cria asteroides iniciais
   for (let i = 0; i < 5; i++) {
     asteroids.push(Asteroid.createOutsideCanvas());
   }
-
   updateAsteroidCounter();
 
-  // Configura o botão para reiniciar o jogo
-  const playAgainButton = document.getElementById("playAgainButton");
-  if (playAgainButton) {
-    playAgainButton.addEventListener("click", resetGame);
-  }
+  // reinicia via botão
+  document
+    .getElementById("playAgainButton")
+    ?.addEventListener("click", resetGame);
 
-  // Inicia o loop do jogo
   gameLoop();
 }
 
-// Reinicia o jogo após game over
-export function resetGame(): void {
-  const gameOverMessage = document.getElementById("gameOverMessage");
-  if (gameOverMessage?.style) {
-    gameOverMessage.style.display = "none";
-  }
-
+// reinicia após Game Over
+export function resetGame() {
+  document.getElementById("gameOverMessage")!.style.display = "none";
   asteroidsDestroyed = 0;
   updateAsteroidCounter();
-
   projectiles = [];
   asteroids = [];
   explosions = [];
-
+  const { canvas } = getWebGLContext();
   ship = new Ship(canvas.width / 2, canvas.height / 2);
-
   for (let i = 0; i < 5; i++) {
     asteroids.push(Asteroid.createOutsideCanvas());
   }
 }
 
-// Configuração do requestAnimationFrame para que possamos cancelá-lo depois
+// override de requestAnimationFrame para capturar rafId
 const _raf = globalThis.requestAnimationFrame.bind(globalThis);
-globalThis.requestAnimationFrame = function (cb: FrameRequestCallback): number {
+const overrideRaf: typeof requestAnimationFrame = (
+  cb: FrameRequestCallback
+): number => {
   const id = _raf(cb);
   rafId = id;
   return id;
-} as typeof requestAnimationFrame;
+};
+globalThis.requestAnimationFrame = overrideRaf;
 
-// Inicia o motor do jogo
+// inicia o engine
 export async function startEngine(): Promise<() => void> {
-  // Se já estivermos rodando, não reinicie
-  if ((globalThis as any)[RUNNING_FLAG]) {
-    return stopEngine;
-  }
+  if ((globalThis as any)[RUNNING_FLAG]) return stopEngine;
   (globalThis as any)[RUNNING_FLAG] = true;
 
-  try {
-    initGame();
-  } catch (error) {
-    console.error("Failed to launch the game: ", error);
-  }
+  // anexa input e inicia o jogo
+  attachInputControls();
+  initGame();
 
-  // Devolve cleaner para React desmontar
   return stopEngine;
 }
 
-// Para o motor do jogo
-export function stopEngine(): void {
+// para o engine
+export function stopEngine() {
   if (rafId !== null) {
     cancelAnimationFrame(rafId);
     rafId = null;
   }
-
   delete (globalThis as any)[RUNNING_FLAG];
+
+  // remove listeners
+  detachInputControls();
 }

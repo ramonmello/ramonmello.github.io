@@ -6,29 +6,34 @@ export default function GamePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    let dispose: (() => void) | undefined;
     let cancelled = false;
 
     (async () => {
-      const engine = await import("@/engine");
+      // IMPORTA SÓ UMA VEZ o ponto de entrada do engine
+      const { start } = await import("@/engine");
       if (cancelled) return;
-      engine.start(canvasRef.current!);
+      // start() retorna a função de stop exata
+      dispose = await start(canvasRef.current!);
     })();
 
     return () => {
       cancelled = true;
-      import("@/engine")
-        .then((engine) => {
-          engine.stop();
-        })
-        .catch((err) => {
-          console.error("Failed to stop game engine:", err);
-        });
+      dispose?.();
     };
   }, []);
 
   return (
     <>
-      <canvas id="gameCanvas" ref={canvasRef} className="fixed inset-0 block" />
+      <canvas
+        id="gameCanvas"
+        ref={canvasRef}
+        style={{
+          zIndex: -1,
+          pointerEvents: "none",
+        }}
+        className="fixed inset-0 block"
+      />
 
       {/* HUD – Tailwind em vez de CSS inline */}
       <div
