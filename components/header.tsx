@@ -20,6 +20,11 @@ export function Header() {
               Blog
             </Link>
           </li>
+          <li>
+            <Link className="font-lores-12 font-normal" href="/asteroids">
+              Asteroids
+            </Link>
+          </li>
           {/* <li>
             <Link
               className="font-lores-12 font-normal"
