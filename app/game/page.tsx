@@ -28,11 +28,7 @@ export default function GamePage() {
 
   return (
     <>
-      <canvas
-        id="gameCanvas"
-        ref={canvasRef}
-        className="fixed z-10 inset-0 block"
-      />
+      <canvas id="gameCanvas" ref={canvasRef} className="fixed inset-0 block" />
 
       {/* HUD – Tailwind em vez de CSS inline */}
       <div
