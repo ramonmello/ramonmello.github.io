@@ -109,7 +109,9 @@ function renderGame() {
 
   // desenha
   asteroids.forEach((a) => a.draw());
-  ship.draw();
+  if (!ship.isDestroyed) {
+    ship.draw();
+  }
   projectiles.forEach((p) => p.draw());
   explosions.forEach((e) => e.draw());
 }
