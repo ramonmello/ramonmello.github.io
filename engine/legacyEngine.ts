@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 /* ------------------------------------------------------------------
@@ -7,6 +8,7 @@
 /* 1. Variáveis globais que serão inicializadas no start() */
 let canvas: HTMLCanvasElement;
 let gl: WebGLRenderingContext;
+const RUNNING_FLAG = "__engineRunning" as const;
 
 /* 2. Exponha canvas/gl caso partes antigas usem globalThis.canvas */
 interface GlobalThis {
@@ -787,6 +789,12 @@ export function start(c: HTMLCanvasElement): () => void {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
+  // se já estivermos rodando, não reinicie
+  if ((globalThis as any)[RUNNING_FLAG]) {
+    return stop;
+  }
+  (globalThis as any)[RUNNING_FLAG] = true;
+
   gl = canvas.getContext("webgl") as WebGLRenderingContext;
   if (!gl) {
     console.error("WebGL not supported in this browser");
@@ -809,4 +817,6 @@ export function stop(): void {
     cancelAnimationFrame(rafId);
     rafId = null;
   }
+
+  delete (globalThis as any)[RUNNING_FLAG];
 }

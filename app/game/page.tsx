@@ -8,12 +8,18 @@ export default function GamePage() {
 
   useEffect(() => {
     let stopFn: (() => void) | undefined;
+    let cancelled = false;
 
-    import("@/engine/legacyEngine").then((engine) => {
+    (async () => {
+      const engine = await import("@/engine/legacyEngine");
+      if (cancelled) return; // já saiu do componente
       stopFn = engine.start(canvasRef.current!);
-    });
+    })();
 
-    return () => stopFn?.(); // limpa no unmount / HMR
+    return () => {
+      cancelled = true;
+      stopFn?.(); // chama o stop exato
+    };
   }, []);
 
   return (
