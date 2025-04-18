@@ -1,19 +1,23 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Script from "next/script";
+// import { start, stop } from "@/engine/legacyEngine";
 
 export default function GamePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // opcional: garantir que o canvas já esteja no DOM antes do script rodar
   useEffect(() => {
-    // Placeholder para futuras integrações
+    let stopFn: (() => void) | undefined;
+
+    import("@/engine/legacyEngine").then((engine) => {
+      stopFn = engine.start(canvasRef.current!);
+    });
+
+    return () => stopFn?.(); // limpa no unmount / HMR
   }, []);
 
   return (
     <>
-      {/* Canvas em tela cheia */}
       <canvas id="gameCanvas" ref={canvasRef} className="fixed inset-0 block" />
 
       {/* HUD – Tailwind em vez de CSS inline */}
@@ -42,7 +46,7 @@ export default function GamePage() {
       </div>
 
       {/* Carrega o main.js exatamente como no HTML antigo */}
-      <Script src="/main.js" strategy="afterInteractive" />
+      {/* <Script src="/main.js" strategy="afterInteractive" /> */}
     </>
   );
 }
