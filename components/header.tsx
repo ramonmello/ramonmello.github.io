@@ -21,7 +21,7 @@ export function Header() {
             </Link>
           </li>
           <li>
-            <Link className="font-lores-12 font-normal" href="/asteroids">
+            <Link className="font-lores-12 font-normal" href="/game">
               Asteroids
             </Link>
           </li>
