@@ -135,17 +135,6 @@ export function resetGame() {
   }
 }
 
-// override de requestAnimationFrame para capturar rafId
-const _raf = globalThis.requestAnimationFrame.bind(globalThis);
-const overrideRaf: typeof requestAnimationFrame = (
-  cb: FrameRequestCallback
-): number => {
-  const id = _raf(cb);
-  rafId = id;
-  return id;
-};
-globalThis.requestAnimationFrame = overrideRaf;
-
 export async function startEngine(): Promise<() => void> {
   if ((globalThis as any)[RUNNING_FLAG]) return stopEngine;
   (globalThis as any)[RUNNING_FLAG] = true;
