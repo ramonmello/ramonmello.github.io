@@ -18,34 +18,19 @@ import {
   detachInputControls,
   consumeSpacePressed,
 } from "../utils/input";
+import { useGameStore } from "../store/gameStore";
 
 // estado do jogo
 let ship: Ship;
 let projectiles: Projectile[] = [];
 let asteroids: Asteroid[] = [];
 let explosions: Explosion[] = [];
-let asteroidsDestroyed = 0;
 
 // requestAnimationFrame
 let rafId: number | null = null;
 
 // Flag para singleton
 const RUNNING_FLAG = "__engineRunning" as const;
-
-// atualiza o contador no HUD
-function updateAsteroidCounter() {
-  const el = document.getElementById("asteroidCounter");
-  if (el) el.textContent = `Score: ${asteroidsDestroyed}`;
-}
-
-// exibe overlay de Game Over
-function showGameOver() {
-  const el = document.getElementById("gameOverMessage");
-  if (!el || el.style.display === "block") return;
-  const scoreEl = document.getElementById("gameOverScore");
-  if (scoreEl) scoreEl.textContent = `Score: ${asteroidsDestroyed}`;
-  el.style.display = "block";
-}
 
 // realiza lógica de update a cada frame
 function updateGame() {
@@ -80,8 +65,8 @@ function updateGame() {
         projectiles.splice(i, 1);
         explosions.push(new Explosion(a.position.x, a.position.y));
         asteroids.splice(j, 1);
-        asteroidsDestroyed++;
-        updateAsteroidCounter();
+        const { incrementScore } = useGameStore.getState();
+        incrementScore(1);
         asteroids.push(Asteroid.createOutsideCanvas());
         asteroids.push(Asteroid.createOutsideCanvas());
         break;
@@ -90,7 +75,8 @@ function updateGame() {
   }
 
   if (ship.isDestroyed) {
-    showGameOver();
+    const { setGameOver } = useGameStore.getState();
+    setGameOver(true);
   }
 }
 
@@ -131,21 +117,14 @@ function initGame() {
   for (let i = 0; i < 5; i++) {
     asteroids.push(Asteroid.createOutsideCanvas());
   }
-  updateAsteroidCounter();
-
-  // reinicia via botão
-  document
-    .getElementById("playAgainButton")
-    ?.addEventListener("click", resetGame);
 
   gameLoop();
 }
 
 // reinicia após Game Over
 export function resetGame() {
-  document.getElementById("gameOverMessage")!.style.display = "none";
-  asteroidsDestroyed = 0;
-  updateAsteroidCounter();
+  const { resetGameState } = useGameStore.getState();
+  resetGameState();
   projectiles = [];
   asteroids = [];
   explosions = [];
@@ -167,19 +146,20 @@ const overrideRaf: typeof requestAnimationFrame = (
 };
 globalThis.requestAnimationFrame = overrideRaf;
 
-// inicia o engine
 export async function startEngine(): Promise<() => void> {
   if ((globalThis as any)[RUNNING_FLAG]) return stopEngine;
   (globalThis as any)[RUNNING_FLAG] = true;
 
-  // anexa input e inicia o jogo
   attachInputControls();
+
+  const { resetGameState } = useGameStore.getState();
+  resetGameState();
+
   initGame();
 
   return stopEngine;
 }
 
-// para o engine
 export function stopEngine() {
   if (rafId !== null) {
     cancelAnimationFrame(rafId);
@@ -187,6 +167,5 @@ export function stopEngine() {
   }
   delete (globalThis as any)[RUNNING_FLAG];
 
-  // remove listeners
   detachInputControls();
 }
