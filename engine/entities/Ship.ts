@@ -1,6 +1,6 @@
 import { getWebGLContext } from "../core/WebGLContext";
-import { keys } from "../utils/input";
 import { Projectile } from "./Projectile";
+import type { KeyboardHandler } from "@/hooks/useKeyboard";
 
 /**
  * Ship — nave controlada pelo jogador
@@ -32,8 +32,11 @@ export class Ship {
   }
 
   /** atualiza movimento, rotação, fricção e trail */
-  update(): void {
+  update(keyboard: KeyboardHandler): void {
     if (this.isDestroyed) return;
+
+    // Obter o estado atual das teclas
+    const keys = keyboard.getState();
 
     // Rotação
     if (keys.ArrowLeft) this.rotation -= this.rotationSpeed;

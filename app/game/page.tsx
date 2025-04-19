@@ -4,16 +4,16 @@ import { useGameStore } from "@/engine/store/gameStore";
 import { resetGame } from "@/engine/core/Engine";
 import { ScoreHUD } from "@/components/game/score-hud";
 import { GameOverModal } from "@/components/game/game-over-modal";
+import { useKeyboard } from "@/hooks/useKeyboard";
 
 export default function GamePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const keyboard = useKeyboard();
 
-  // PUXA APENAS AS FUNÇÕES, sem ouvir score!
   const resetGameState = useGameStore((s) => s.resetGameState);
   const setGameOver = useGameStore((s) => s.setGameOver);
 
   const handlePlayAgain = () => {
-    resetGameState();
     resetGame();
   };
 
@@ -25,7 +25,7 @@ export default function GamePage() {
       const { start } = await import("@/engine");
       if (cancelled) return;
       resetGameState();
-      dispose = await start(canvasRef.current!);
+      dispose = await start(canvasRef.current!, keyboard);
     })();
 
     return () => {
@@ -33,7 +33,7 @@ export default function GamePage() {
       dispose?.();
       setGameOver(false);
     };
-  }, [resetGameState, setGameOver]);
+  }, [resetGameState, setGameOver, keyboard]);
 
   return (
     <>
