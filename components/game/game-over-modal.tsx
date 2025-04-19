@@ -7,7 +7,7 @@ export function GameOverModal({ onPlayAgain }: { onPlayAgain(): void }) {
 
   if (!gameOver) return null;
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/75 text-white text-6xl font-bold z-20">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/50 text-white text-6xl font-bold z-20">
       GAME OVER
       <div className="text-4xl mt-5">Score: {score}</div>
       <button
