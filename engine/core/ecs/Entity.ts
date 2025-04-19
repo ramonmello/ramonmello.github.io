@@ -1,4 +1,5 @@
 import { Component } from "./Component";
+import { MessageBus, MessageData, MessageHandler } from "./MessageBus";
 
 /**
  * Representa uma entidade no sistema ECS.
@@ -13,6 +14,9 @@ export class Entity {
 
   /** Nome opcional da entidade para depuração */
   name?: string;
+
+  /** Lista de disposers para limpar listeners de mensagens */
+  private messageDisposers: Array<() => void> = [];
 
   /**
    * Cria uma nova entidade
@@ -33,6 +37,12 @@ export class Entity {
   addComponent(component: Component): Entity {
     component.entity = this;
     this.components.set(component.type, component);
+
+    // Chama o método onAttach se existir
+    if (component.onAttach) {
+      component.onAttach();
+    }
+
     return this;
   }
 
@@ -62,9 +72,61 @@ export class Entity {
   removeComponent(type: string): boolean {
     const component = this.components.get(type);
     if (component) {
+      // Chama o método onDetach se existir
+      if (component.onDetach) {
+        component.onDetach();
+      }
+
       component.entity = undefined;
       return this.components.delete(type);
     }
     return false;
+  }
+
+  /**
+   * Emite uma mensagem para todo o sistema
+   * @param messageType Tipo da mensagem a emitir
+   * @param data Dados adicionais a serem enviados com a mensagem
+   */
+  emit(messageType: string, data: MessageData = {}): void {
+    MessageBus.getInstance().emit(messageType, {
+      entity: this,
+      entityId: this.id,
+      entityName: this.name,
+      ...data,
+    });
+  }
+
+  /**
+   * Registra um listener para um tipo de mensagem
+   * @param messageType Tipo da mensagem a ouvir
+   * @param handler Função a ser chamada quando a mensagem for emitida
+   * @returns A própria entidade para encadeamento
+   */
+  on(messageType: string, handler: MessageHandler): Entity {
+    const disposer = MessageBus.getInstance().on(messageType, handler);
+    this.messageDisposers.push(disposer);
+    return this;
+  }
+
+  /**
+   * Remove todos os listeners de mensagens registrados por esta entidade
+   */
+  clearAllListeners(): void {
+    this.messageDisposers.forEach((disposer) => disposer());
+    this.messageDisposers = [];
+  }
+
+  /**
+   * Destrói a entidade, desanexando componentes e limpando recursos
+   */
+  destroy(): void {
+    // Remove todos os componentes e chama seus métodos onDetach
+    Array.from(this.components.keys()).forEach((type) => {
+      this.removeComponent(type);
+    });
+
+    // Remove todos os listeners de mensagens
+    this.clearAllListeners();
   }
 }

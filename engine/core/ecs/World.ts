@@ -1,5 +1,6 @@
 import { Entity } from "./Entity";
 import { System } from "./System";
+import { MessageBus, MessageData, MessageHandler } from "./MessageBus";
 
 /**
  * Gerenciador central do ECS que mantém entidades e sistemas.
@@ -18,6 +19,12 @@ export class World {
   /** Última vez que update foi chamado */
   private lastUpdateTime: number = 0;
 
+  /** Lista de disposers para remover listeners de mensagens */
+  private messageDisposers: Array<() => void> = [];
+
+  /** Indica se o mundo está em execução */
+  private running: boolean = false;
+
   /**
    * Adiciona uma entidade ao mundo
    * @param entity Entidade a ser adicionada
@@ -25,6 +32,7 @@ export class World {
    */
   addEntity(entity: Entity): World {
     this.entities.set(entity.id, entity);
+    this.emit("entityAdded", { entity });
     return this;
   }
 
@@ -33,7 +41,12 @@ export class World {
    * @param id ID da entidade a ser removida
    */
   removeEntity(id: string): void {
-    this.entities.delete(id);
+    const entity = this.entities.get(id);
+    if (entity) {
+      entity.destroy();
+      this.entities.delete(id);
+      this.emit("entityRemoved", { entityId: id });
+    }
   }
 
   /**
@@ -73,13 +86,70 @@ export class World {
   }
 
   /**
+   * Emite uma mensagem para todo o sistema
+   * @param messageType Tipo da mensagem a emitir
+   * @param data Dados adicionais a serem enviados com a mensagem
+   */
+  emit(messageType: string, data: MessageData = {}): void {
+    MessageBus.getInstance().emit(messageType, {
+      world: this,
+      ...data,
+    });
+  }
+
+  /**
+   * Registra um listener para um tipo de mensagem
+   * @param messageType Tipo da mensagem a ouvir
+   * @param handler Função a ser chamada quando a mensagem for emitida
+   * @returns O próprio mundo para encadeamento
+   */
+  on(messageType: string, handler: MessageHandler): World {
+    const disposer = MessageBus.getInstance().on(messageType, handler);
+    this.messageDisposers.push(disposer);
+    return this;
+  }
+
+  /**
+   * Remove todos os listeners de mensagens registrados por este mundo
+   */
+  clearAllListeners(): void {
+    this.messageDisposers.forEach((disposer) => disposer());
+    this.messageDisposers = [];
+  }
+
+  /**
+   * Inicia o mundo
+   */
+  start(): void {
+    if (!this.running) {
+      this.running = true;
+      this.emit("worldStarted", {});
+    }
+  }
+
+  /**
+   * Para o mundo
+   */
+  stop(): void {
+    if (this.running) {
+      this.running = false;
+      this.emit("worldStopped", {});
+    }
+  }
+
+  /**
    * Atualiza todos os sistemas ativos
    * @param deltaTime Tempo desde a última atualização em milissegundos
    */
   update(deltaTime: number): void {
+    if (!this.running) return;
+
     // Atualiza tempo acumulado
     this.elapsedTime += deltaTime;
     this.lastUpdateTime = performance.now();
+
+    // Emite evento de pré-atualização
+    this.emit("preUpdate", { deltaTime });
 
     // Para cada sistema ativo
     for (const system of this.systems) {
@@ -93,6 +163,9 @@ export class World {
       // Atualiza o sistema com as entidades elegíveis
       system.update(eligibleEntities, deltaTime);
     }
+
+    // Emite evento de pós-atualização
+    this.emit("postUpdate", { deltaTime });
   }
 
   /**
@@ -116,7 +189,31 @@ export class World {
    * Limpa todas as entidades e sistemas
    */
   clear(): void {
+    // Destrói todas as entidades
+    this.entities.forEach((entity) => entity.destroy());
     this.entities.clear();
+
+    // Limpa sistemas
     this.systems = [];
+
+    // Limpa listeners
+    this.clearAllListeners();
+
+    // Reseta timers
+    this.elapsedTime = 0;
+    this.lastUpdateTime = 0;
+
+    // Emite evento
+    this.emit("worldCleared", {});
+  }
+
+  /**
+   * Destrói o mundo e libera recursos
+   */
+  destroy(): void {
+    this.stop();
+    this.clear();
+    this.emit("worldDestroyed", {});
+    MessageBus.getInstance().clearAllListeners();
   }
 }
