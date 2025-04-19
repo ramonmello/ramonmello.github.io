@@ -9,7 +9,7 @@ import {
   checkProjectileAsteroidCollision,
 } from "../utils/collisions";
 import { useGameStore } from "../store/gameStore";
-import type { KeyboardHandler } from "@/hooks/useKeyboard";
+import type { InputSystem } from "./input/InputSystem";
 
 // Interface para o objeto global com a flag de execução
 const RUNNING_FLAG = "__engineRunning" as const;
@@ -43,22 +43,33 @@ let gameState: GameState;
 let rafId: number | null = null;
 
 // Sistema de input
-const handleInput = (
-  state: GameState,
-  keyboard: KeyboardHandler
-): GameState => {
+const handleInput = (state: GameState, inputSystem: InputSystem): GameState => {
   const newState = { ...state };
 
-  // Atualiza nave com base no teclado
-  newState.ship.update(keyboard);
+  // Obtém o estado de direção e ações
+  const direction = inputSystem.getDirection();
+  const actions = inputSystem.getActions();
 
-  // Disparo único quando Space vai de false → true
-  const keys = keyboard.getState();
-  if (keys.Space && !newState.prevSpace) {
+  // Atualiza a nave com base na direção
+  // Adaptação temporária até refatorarmos a classe Ship
+  const shipInputAdapter = {
+    getState: () => ({
+      ArrowLeft: direction.x < 0,
+      ArrowRight: direction.x > 0,
+      ArrowUp: direction.y < 0,
+      ArrowDown: direction.y > 0,
+      Space: actions.fire,
+    }),
+  };
+
+  newState.ship.update(shipInputAdapter);
+
+  // Disparo único quando fire vai de false → true
+  if (actions.fire && !newState.prevSpace) {
     const p = newState.ship.shoot();
     if (p) newState.projectiles.push(p);
   }
-  newState.prevSpace = keys.Space;
+  newState.prevSpace = actions.fire;
 
   return newState;
 };
@@ -159,7 +170,7 @@ const renderGame = (state: GameState): void => {
 
 // Funções públicas para manter a compatibilidade com a API original
 export async function startEngine(
-  keyboard: KeyboardHandler
+  inputSystem: InputSystem
 ): Promise<() => void> {
   if ((globalThis as GlobalWithEngineFlag)[RUNNING_FLAG]) {
     return stopEngine;
@@ -174,7 +185,7 @@ export async function startEngine(
   // Loop principal do jogo
   function gameLoop() {
     // Atualiza estado do jogo
-    gameState = handleInput(gameState, keyboard);
+    gameState = handleInput(gameState, inputSystem);
     gameState = updateEntities(gameState);
     gameState = handleCollisions(gameState);
 
