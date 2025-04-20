@@ -26,22 +26,15 @@ export function createShipEntity(config?: AsteroidGameConfig): Entity {
   );
 
   // Vertices para a forma da nave (triângulo)
-  // Dimensões: base = 15, altura = 20
-  const shipVertices = new Float32Array([
-    0,
-    -10, // Ponta (frente)
-    -7.5,
-    10, // Base esquerda
-    7.5,
-    10, // Base direita
-  ]);
+  // Dimensões: base = 15, altura = 37.5
+  const shipVertices = new Float32Array([0, 22.5, -7.5, -15, 7.5, -15]);
 
   // Componente de renderização
   const render = new RenderComponent(shipVertices);
   render.setColor(1, 1, 1, 1); // Branco
 
   // Componente de física
-  const physics = new PhysicsComponent(0.98, true, 1, 5);
+  const physics = new PhysicsComponent(0.98, true, 0.5, 5);
 
   // Componente de colisão
   const collider = ColliderComponent.createCircle(12);
