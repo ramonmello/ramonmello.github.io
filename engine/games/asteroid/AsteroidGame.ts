@@ -23,6 +23,7 @@ import { ColliderComponent } from "@/engine/core/ecs/components/ColliderComponen
 import { PlayerComponent } from "./components/PlayerComponent";
 import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
 import { MessageData } from "@/engine/core/messaging/MessageBus";
+import { ProjectileComponent } from "./components/ProjectileComponent";
 
 // Interfaces para tipagem de eventos
 interface ProjectileHitEventData extends MessageData {
@@ -132,7 +133,7 @@ export class AsteroidGame extends BaseGame {
     // Sistemas da engine core
     this.world.addSystem(new PhysicsSystem());
     this.world.addSystem(new CollisionSystem());
-    this.world.addSystem(new RenderSystem(true, [0, 0, 0.1, 1])); // Fundo azul escuro
+    this.world.addSystem(new RenderSystem(true, [0, 0, 0.1, 0])); // Fundo transparente
 
     // Sistemas específicos do jogo Asteroid
     this.world.addSystem(new PlayerControlSystem(this));
@@ -408,6 +409,8 @@ export class AsteroidGame extends BaseGame {
     const isPlayerB = entityB.hasComponent(PlayerComponent.TYPE);
     const isAsteroidA = entityA.hasComponent(AsteroidComponent.TYPE);
     const isAsteroidB = entityB.hasComponent(AsteroidComponent.TYPE);
+    const isProjectileA = entityA.hasComponent(ProjectileComponent.TYPE);
+    const isProjectileB = entityB.hasComponent(ProjectileComponent.TYPE);
 
     // Caso seja colisão entre nave e asteroide
     if ((isPlayerA && isAsteroidB) || (isPlayerB && isAsteroidA)) {
@@ -426,6 +429,18 @@ export class AsteroidGame extends BaseGame {
         // Uso da variável asteroid para evitar o erro
         console.log(`Colisão com asteroide ID: ${asteroid.id}`);
       }
+    }
+
+    // Caso seja colisão entre projétil e asteroide
+    if ((isProjectileA && isAsteroidB) || (isProjectileB && isAsteroidA)) {
+      const projectile = isProjectileA ? entityA : entityB;
+      const asteroid = isProjectileA ? entityB : entityA;
+
+      // Emite o evento de acerto do projétil no asteroide
+      this.world.emit(PROJECTILE_EVENTS.HIT, {
+        projectile,
+        asteroid,
+      });
     }
 
     // Verificações adicionais para outros tipos de colisão podem ser
