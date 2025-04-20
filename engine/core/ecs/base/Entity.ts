@@ -1,5 +1,9 @@
-import { Component } from "./Component";
-import { MessageBus, MessageData, MessageHandler } from "./MessageBus";
+import { Component } from "@/engine/core/ecs/base/Component";
+import {
+  MessageBus,
+  MessageData,
+  MessageHandler,
+} from "@/engine/core/messaging/MessageBus";
 
 /**
  * Representa uma entidade no sistema ECS.

@@ -1,4 +1,4 @@
-import { Component } from "../../../core/ecs/Component";
+import { Component } from "@/engine/core/ecs/base/Component";
 
 /**
  * Tamanhos possíveis de asteroides

@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { useGameStore } from "@/engine/store/gameStore";
-import { resetGame } from "@/engine/core/Engine";
 import { ScoreHUD } from "@/components/game/score-hud";
 import { GameOverModal } from "@/components/game/game-over-modal";
 import { useKeyboard } from "@/hooks/useKeyboard";
+import { GameManager } from "@/engine/GameManager";
+import { asteroidGame } from "@/engine/games/asteroid";
+import { initWebGLContext } from "@/engine/core/rendering/WebGLContext";
 
 export default function GamePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -14,7 +16,11 @@ export default function GamePage() {
   const setGameOver = useGameStore((s) => s.setGameOver);
 
   const handlePlayAgain = () => {
-    resetGame();
+    // Reiniciar o jogo diretamente pelo AsteroidGame
+    const game = GameManager.getInstance().getActiveGame();
+    if (game) {
+      game.restart();
+    }
   };
 
   useEffect(() => {
@@ -22,15 +28,37 @@ export default function GamePage() {
     let cancelled = false;
 
     (async () => {
-      const { start } = await import("@/engine");
-      if (cancelled) return;
+      if (cancelled || !canvasRef.current) return;
+
+      // Inicializar contexto WebGL
+      await initWebGLContext(canvasRef.current);
+
+      // Resetar estado do jogo
       resetGameState();
-      dispose = await start(canvasRef.current!, keyboard);
+
+      // Iniciar o jogo Asteroid diretamente
+      dispose = await GameManager.getInstance().startGame(
+        asteroidGame,
+        canvasRef.current,
+        keyboard
+      );
+
+      // Configurar observador para o estado de game over
+      const gameOverObserver = () => {
+        if (asteroidGame.getGameState() === "gameOver") {
+          setGameOver(true);
+        }
+      };
+
+      // Adicionar observer para detectar game over
+      const world = asteroidGame.getWorld();
+      world.on("gameOver", gameOverObserver);
     })();
 
     return () => {
       cancelled = true;
       dispose?.();
+      GameManager.getInstance().stopGame();
       setGameOver(false);
     };
   }, [resetGameState, setGameOver, keyboard]);

@@ -1,8 +1,8 @@
-import { System } from "../System";
-import { Entity } from "../Entity";
-import { TransformComponent } from "../components/TransformComponent";
-import { RenderComponent } from "../components/RenderComponent";
-import { getWebGLContext } from "../../WebGLContext";
+import { System } from "@/engine/core/ecs/base/System";
+import { Entity } from "@/engine/core/ecs/base/Entity";
+import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
+import { RenderComponent } from "@/engine/core/ecs/components/RenderComponent";
+import { getWebGLContext } from "@/engine/core/rendering/WebGLContext";
 
 /**
  * Sistema que renderiza as entidades na tela

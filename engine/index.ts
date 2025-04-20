@@ -1,12 +1,12 @@
 import { GameManager } from "./GameManager";
-import { Game, GameConfig } from "./games/Game";
+import { Game, GameConfig } from "@/engine/games/base/Game";
 import type { KeyboardHandler } from "@/hooks/useKeyboard";
-import { initWebGLContext } from "./core/WebGLContext";
+import { initWebGLContext } from "./core/rendering/WebGLContext";
 import { asteroidGame } from "./games/asteroid";
 import {
   stopEngine as legacyStopEngine,
   resetGame as legacyResetGame,
-} from "./core/Engine";
+} from "@/engine/legacy/Engine";
 
 // Função para iniciar o jogo Asteroid na página game
 let disposer: (() => void) | undefined;
@@ -93,12 +93,12 @@ export function resumeGame(): void {
 /**
  * Re-exportações para facilitar o uso
  */
-export * from "./core/ecs/Entity";
-export * from "./core/ecs/Component";
-export * from "./core/ecs/System";
-export * from "./core/ecs/World";
-export * from "./core/ecs/MessageBus";
-export * from "./core/ecs/MessageTypes";
-export * from "./games/Game";
-export * from "./games/BaseGame";
-export * from "./games/asteroid";
+export * from "@/engine/core/ecs/base/Entity";
+export * from "@/engine/core/ecs/base/Component";
+export * from "@/engine/core/ecs/base/System";
+export * from "@/engine/core/ecs/base/World";
+export * from "@/engine/core/messaging/MessageBus";
+export * from "@/engine/core/messaging/MessageTypes";
+export * from "@/engine/games/base/Game";
+export * from "@/engine/games/base/BaseGame";
+export * from "@/engine/games/asteroid";

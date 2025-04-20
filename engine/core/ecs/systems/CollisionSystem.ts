@@ -1,11 +1,11 @@
-import { System } from "../System";
-import { Entity } from "../Entity";
-import { TransformComponent } from "../components/TransformComponent";
+import { System } from "@/engine/core/ecs/base/System";
+import { Entity } from "@/engine/core/ecs/base/Entity";
+import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
 import {
   ColliderComponent,
   ColliderType,
-} from "../components/ColliderComponent";
-import { COLLISION_EVENTS } from "../MessageTypes";
+} from "@/engine/core/ecs/components/ColliderComponent";
+import { COLLISION_EVENTS } from "@/engine/core/messaging/MessageTypes";
 
 /**
  * Sistema que detecta e notifica colisões entre entidades

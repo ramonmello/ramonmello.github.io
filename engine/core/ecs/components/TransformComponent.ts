@@ -1,4 +1,4 @@
-import { Component } from "../Component";
+import { Component } from "@/engine/core/ecs/base/Component";
 
 /**
  * Interface para representar um ponto 2D

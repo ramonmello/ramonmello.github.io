@@ -1,15 +1,15 @@
-import { System } from "../../../core/ecs/System";
-import { Entity } from "../../../core/ecs/Entity";
-import { World } from "../../../core/ecs/World";
-import { TransformComponent } from "../../../core/ecs/components/TransformComponent";
-import { RenderComponent } from "../../../core/ecs/components/RenderComponent";
-import { PhysicsComponent } from "../../../core/ecs/components/PhysicsComponent";
-import { ColliderComponent } from "../../../core/ecs/components/ColliderComponent";
+import { System } from "@/engine/core/ecs/base/System";
+import { Entity } from "@/engine/core/ecs/base/Entity";
+import { World } from "@/engine/core/ecs/base/World";
+import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
+import { RenderComponent } from "@/engine/core/ecs/components/RenderComponent";
+import { PhysicsComponent } from "@/engine/core/ecs/components/PhysicsComponent";
+import { ColliderComponent } from "@/engine/core/ecs/components/ColliderComponent";
 import { ProjectileComponent } from "../components/ProjectileComponent";
 import {
   PLAYER_EVENTS,
   PROJECTILE_EVENTS,
-} from "../../../core/ecs/MessageTypes";
+} from "@/engine/core/messaging/MessageTypes";
 
 /**
  * Sistema que gerencia o ciclo de vida dos projéteis e cria novos projéteis

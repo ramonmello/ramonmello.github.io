@@ -1,11 +1,11 @@
-import { Entity } from "../../../core/ecs/Entity";
-import { TransformComponent } from "../../../core/ecs/components/TransformComponent";
-import { RenderComponent } from "../../../core/ecs/components/RenderComponent";
-import { PhysicsComponent } from "../../../core/ecs/components/PhysicsComponent";
-import { ColliderComponent } from "../../../core/ecs/components/ColliderComponent";
+import { Entity } from "@/engine/core/ecs/base/Entity";
+import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
+import { RenderComponent } from "@/engine/core/ecs/components/RenderComponent";
+import { PhysicsComponent } from "@/engine/core/ecs/components/PhysicsComponent";
+import { ColliderComponent } from "@/engine/core/ecs/components/ColliderComponent";
 import { PlayerComponent } from "../components/PlayerComponent";
 import { AsteroidGameConfig } from "../AsteroidGame";
-import { getWebGLContext } from "../../../core/WebGLContext";
+import { getWebGLContext } from "@/engine/core/rendering/WebGLContext";
 
 /**
  * Cria uma entidade para a nave do jogador

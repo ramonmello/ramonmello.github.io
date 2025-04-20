@@ -1,16 +1,16 @@
-import { BaseGame } from "../BaseGame";
-import { GameConfig } from "../Game";
-import { World } from "../../core/ecs/World";
-import { PhysicsSystem } from "../../core/ecs/systems/PhysicsSystem";
-import { RenderSystem } from "../../core/ecs/systems/RenderSystem";
-import { CollisionSystem } from "../../core/ecs/systems/CollisionSystem";
+import { BaseGame } from "@/engine/games/base/BaseGame";
+import { GameConfig } from "@/engine/games/base/Game";
+import { World } from "@/engine/core/ecs/base/World";
+import { PhysicsSystem } from "@/engine/core/ecs/systems/PhysicsSystem";
+import { RenderSystem } from "@/engine/core/ecs/systems/RenderSystem";
+import { CollisionSystem } from "@/engine/core/ecs/systems/CollisionSystem";
 import {
   COLLISION_EVENTS,
   PLAYER_EVENTS,
   GAME_EVENTS,
   PROJECTILE_EVENTS,
-} from "../../core/ecs/MessageTypes";
-import { Entity } from "../../core/ecs/Entity";
+} from "@/engine/core/messaging/MessageTypes";
+import { Entity } from "@/engine/core/ecs/base/Entity";
 import { PlayerControlSystem } from "./systems/PlayerControlSystem";
 import { ProjectileSystem } from "./systems/ProjectileSystem";
 import { createShipEntity } from "./entities/ShipEntity";
@@ -19,10 +19,10 @@ import {
   AsteroidComponent,
   AsteroidSize,
 } from "./components/AsteroidComponent";
-import { ColliderComponent } from "../../core/ecs/components/ColliderComponent";
+import { ColliderComponent } from "@/engine/core/ecs/components/ColliderComponent";
 import { PlayerComponent } from "./components/PlayerComponent";
-import { TransformComponent } from "../../core/ecs/components/TransformComponent";
-import { MessageData } from "../../core/ecs/MessageBus";
+import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
+import { MessageData } from "@/engine/core/messaging/MessageBus";
 
 // Interfaces para tipagem de eventos
 interface ProjectileHitEventData extends MessageData {
@@ -293,11 +293,19 @@ export class AsteroidGame extends BaseGame {
   }
 
   /**
-   * Finaliza o jogo
+   * Processa o fim de jogo
    */
   private gameOver(): void {
     this.gameState = "gameOver";
-    this.world.emit(GAME_EVENTS.GAME_OVER, { score: this.score });
+
+    // Emite evento de game over para o world
+    this.world.emit("gameOver", {
+      score: this.score,
+      level: this.level,
+    });
+
+    // Pausa o jogo quando ocorre game over
+    this.pause();
   }
 
   /**

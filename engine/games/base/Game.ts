@@ -1,5 +1,5 @@
-import { World } from "../core/ecs/World";
-import { InputSystem } from "../core/input/InputSystem";
+import { World } from "@/engine/core/ecs/base/World";
+import { InputSystem } from "@/engine/core/input/InputSystem";
 
 /**
  * Configuração base para jogos

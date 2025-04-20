@@ -1,6 +1,10 @@
 import { Entity } from "./Entity";
 import { System } from "./System";
-import { MessageBus, MessageData, MessageHandler } from "./MessageBus";
+import {
+  MessageBus,
+  MessageData,
+  MessageHandler,
+} from "../../messaging/MessageBus";
 
 /**
  * Gerenciador central do ECS que mantém entidades e sistemas.

@@ -1,8 +1,8 @@
-import { Game, GameConfig } from "./games/Game";
-import { InputSystem } from "./core/input/InputSystem";
-import { KeyboardInputSystem } from "./core/input/KeyboardInputSystem";
-import { MessageBus } from "./core/ecs/MessageBus";
-import { initWebGLContext } from "./core/WebGLContext";
+import { Game, GameConfig } from "@/engine/games/base/Game";
+import { InputSystem } from "@/engine/core/input/InputSystem";
+import { KeyboardInputSystem } from "@/engine/core/input/KeyboardInputSystem";
+import { MessageBus } from "@/engine/core/messaging/MessageBus";
+import { initWebGLContext } from "@/engine/core/rendering/WebGLContext";
 import type { KeyboardHandler } from "@/hooks/useKeyboard";
 
 /**

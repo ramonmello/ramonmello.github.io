@@ -1,5 +1,5 @@
-import { Component } from "../../../core/ecs/Component";
-import { Entity } from "../../../core/ecs/Entity";
+import { Component } from "@/engine/core/ecs/base/Component";
+import { Entity } from "@/engine/core/ecs/base/Entity";
 
 /**
  * Componente que gerencia as propriedades específicas de um projétil

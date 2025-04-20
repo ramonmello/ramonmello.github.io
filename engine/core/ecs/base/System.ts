@@ -1,5 +1,5 @@
 import { Entity } from "./Entity";
-import { World } from "./World";
+import { World } from "@/engine/core/ecs/base/World";
 
 /**
  * Classe base para todos os sistemas no ECS.

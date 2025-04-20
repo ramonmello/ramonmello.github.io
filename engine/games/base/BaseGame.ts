@@ -1,7 +1,7 @@
-import { World } from "../core/ecs/World";
+import { World } from "@/engine/core/ecs/base/World";
 import { Game, GameConfig } from "./Game";
-import { InputSystem } from "../core/input/InputSystem";
-import { GAME_EVENTS } from "../core/ecs/MessageTypes";
+import { InputSystem } from "@/engine/core/input/InputSystem";
+import { GAME_EVENTS } from "@/engine/core/messaging/MessageTypes";
 
 /**
  * Implementação base para jogos
