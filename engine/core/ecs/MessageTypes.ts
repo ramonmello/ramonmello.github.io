@@ -26,10 +26,20 @@ export const PLAYER_EVENTS = {
   RESPAWN: "playerRespawn",
 };
 
-// Mensagens de colisão
+/**
+ * Mensagens de colisão
+ */
 export const COLLISION_EVENTS = {
-  DETECT: "collisionDetect",
-  RESOLVE: "collisionResolve",
+  // Eventos de detecção (usado para lógica de jogo)
+  DETECT: "collision.detect",
+
+  // Eventos de resolução (usado para física)
+  RESOLVE: "collision.resolve",
+
+  // Eventos de trigger (para colisores com isTrigger=true)
+  ENTER: "collision.trigger.enter",
+  STAY: "collision.trigger.stay",
+  EXIT: "collision.trigger.exit",
 };
 
 // Mensagens de jogo
@@ -40,6 +50,14 @@ export const GAME_EVENTS = {
   GAME_WIN: "gameWin",
   GAME_PAUSE: "gamePause",
   GAME_RESUME: "gameResume",
+
+  // Novas mensagens específicas para o ciclo de vida do jogo
+  INITIALIZED: "gameInitialized",
+  STARTED: "gameStarted",
+  PAUSED: "gamePaused",
+  RESUMED: "gameResumed",
+  STOPPED: "gameStopped",
+  RESTARTED: "gameRestarted",
 };
 
 // Mensagens de projéteis
@@ -57,4 +75,35 @@ export const ENTITY_EVENTS = {
   COMPONENT_ADDED: "componentAdded",
   COMPONENT_REMOVED: "componentRemoved",
   STATE_CHANGED: "entityStateChanged",
+};
+
+/**
+ * Tipos de mensagens para comunicação entre componentes e sistemas
+ */
+export const MESSAGE_TYPES = {
+  // Tipos de mensagens gerais do ECS
+  ECS: {
+    ENTITY_CREATED: "entity.created",
+    ENTITY_DESTROYED: "entity.destroyed",
+    COMPONENT_ADDED: "component.added",
+    COMPONENT_REMOVED: "component.removed",
+  },
+
+  // Mensagens relacionadas à entrada do usuário
+  INPUT: {
+    KEY_DOWN: "input.key.down",
+    KEY_UP: "input.key.up",
+    MOUSE_DOWN: "input.mouse.down",
+    MOUSE_UP: "input.mouse.up",
+    MOUSE_MOVE: "input.mouse.move",
+  },
+
+  // Mensagens relacionadas ao ciclo de vida do jogo
+  GAME: {
+    INIT: "game.init",
+    START: "game.start",
+    PAUSE: "game.pause",
+    RESUME: "game.resume",
+    END: "game.end",
+  },
 };
