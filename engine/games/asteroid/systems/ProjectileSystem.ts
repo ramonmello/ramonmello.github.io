@@ -66,7 +66,7 @@ export class ProjectileSystem extends System {
         entity.emit(PROJECTILE_EVENTS.EXPIRE, { entity });
 
         // Remove a entidade do mundo
-        this.world?.removeEntity(entity);
+        this.world?.removeEntity(entity.id);
       }
     });
   }
