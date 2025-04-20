@@ -22,15 +22,6 @@ export default function Home() {
         canvasRef.current,
         keyboard
       );
-
-      // Configurar atualização do estado do teclado
-      const updateKeyState = () => {
-        floatingAroundGame.updateKeyState(keyboard.getState());
-        if (!cancelled) {
-          requestAnimationFrame(updateKeyState);
-        }
-      };
-      updateKeyState();
     })();
 
     return () => {

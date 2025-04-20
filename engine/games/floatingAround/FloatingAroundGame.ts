@@ -4,12 +4,8 @@ import { World } from "@/engine/core/ecs/base/World";
 import { PhysicsSystem } from "@/engine/core/ecs/systems/PhysicsSystem";
 import { RenderSystem } from "@/engine/core/ecs/systems/RenderSystem";
 import { Entity } from "@/engine/core/ecs/base/Entity";
-import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
-import { RenderComponent } from "@/engine/core/ecs/components/RenderComponent";
-import { PhysicsComponent } from "@/engine/core/ecs/components/PhysicsComponent";
-import { getWebGLContext } from "@/engine/core/rendering/WebGLContext";
-import { KeyState } from "@/hooks/useKeyboard";
 import { ShipControlSystem } from "./systems/ShipControlSystem";
+import { createShipEntity } from "./entities/ShipEntity";
 
 /**
  * Configuração específica para o jogo FloatingAround
@@ -34,9 +30,6 @@ export class FloatingAroundGame extends BaseGame {
 
   /** Referência para a entidade da nave */
   private shipEntity?: Entity;
-
-  /** Estado atual das teclas */
-  private keyState: KeyState = {};
 
   /**
    * Retorna a configuração padrão para o jogo FloatingAround
@@ -66,20 +59,6 @@ export class FloatingAroundGame extends BaseGame {
   }
 
   /**
-   * Atualiza o estado das teclas
-   */
-  updateKeyState(keyState: KeyState): void {
-    this.keyState = keyState;
-  }
-
-  /**
-   * Obtém o estado atual das teclas
-   */
-  getKeyState(): KeyState {
-    return this.keyState;
-  }
-
-  /**
    * Cria os sistemas necessários para o jogo
    */
   protected createSystems(): void {
@@ -92,51 +71,14 @@ export class FloatingAroundGame extends BaseGame {
   }
 
   /**
-   * Cria as entidades iniciais do jogo
+   * Cria a entidade da nave
    */
-  protected createEntities(): void {
-    // Cria a nave
-    this.shipEntity = this.createShipEntity();
+  private createShip(): void {
+    this.shipEntity = createShipEntity(this.getConfig());
     this.world.addEntity(this.shipEntity);
   }
 
-  /**
-   * Cria a entidade da nave
-   */
-  private createShipEntity(): Entity {
-    const { canvas } = getWebGLContext();
-
-    // Cria a entidade com ID e nome
-    const ship = new Entity("player_ship", "Player Ship");
-
-    // Componente de transformação - posiciona no centro da tela
-    const transform = new TransformComponent(
-      canvas.width / 2,
-      canvas.height / 2,
-      0 // Apontando para cima
-    );
-
-    // Vertices para a forma da nave (triângulo)
-    // Dimensões: base = 15, altura = 37.5
-    const shipVertices = new Float32Array([0, 22.5, -7.5, -15, 7.5, -15]);
-
-    // Componente de renderização
-    const render = new RenderComponent(shipVertices);
-    render.setColor(1, 1, 1, 1); // Branco
-
-    // Componente de física
-    const physics = new PhysicsComponent(0.98, true, 0.5, 5);
-
-    // Adiciona todos os componentes à entidade
-    ship.addComponent(transform).addComponent(render).addComponent(physics);
-
-    return ship;
-  }
-
-  /**
-   * Obtém a entidade da nave
-   */
-  getShipEntity(): Entity | undefined {
-    return this.shipEntity;
+  protected createEntities(): void {
+    this.createShip();
   }
 }
