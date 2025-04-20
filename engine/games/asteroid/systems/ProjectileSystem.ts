@@ -76,6 +76,7 @@ export class ProjectileSystem extends System {
    * @param data Dados do tiro (posição, rotação, etc)
    */
   private createProjectile(data: any): void {
+    // TODO: Remover o any
     if (!this.world) return;
 
     const { position, rotation, velocity: shipVelocity } = data;
