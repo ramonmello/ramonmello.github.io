@@ -4,7 +4,6 @@ import { World } from "@/engine/core/ecs/base/World";
 import { PhysicsSystem } from "@/engine/core/ecs/systems/PhysicsSystem";
 import { RenderSystem } from "@/engine/core/ecs/systems/RenderSystem";
 import { Entity } from "@/engine/core/ecs/base/Entity";
-import { System } from "@/engine/core/ecs/base/System";
 import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
 import { RenderComponent } from "@/engine/core/ecs/components/RenderComponent";
 import { PhysicsComponent } from "@/engine/core/ecs/components/PhysicsComponent";

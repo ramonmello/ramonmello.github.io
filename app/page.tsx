@@ -42,7 +42,10 @@ export default function Home() {
 
   return (
     <div className="flex flex-col w-full justify-between relative z-10">
-      <canvas ref={canvasRef} className="fixed inset-0 block -z-10" />
+      <canvas
+        ref={canvasRef}
+        className="fixed inset-0 block -z-10 pointer-events-none"
+      />
 
       <h1 className="text-8xl font-bold md:text-9xl leading-20">Ramon</h1>
       <div className="inline-flex items-center">

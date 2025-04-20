@@ -83,13 +83,7 @@ export function StarCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        zIndex: -1,
-        pointerEvents: "none",
-      }}
+      className="fixed inset-0 block -z-10 pointer-events-none"
     />
   );
 }

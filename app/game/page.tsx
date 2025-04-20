@@ -67,8 +67,7 @@ export default function GamePage() {
     <>
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 block"
-        style={{ zIndex: -1, pointerEvents: "none" }}
+        className="fixed inset-0 block -z-10 pointer-events-none"
       />
 
       <ScoreHUD />
