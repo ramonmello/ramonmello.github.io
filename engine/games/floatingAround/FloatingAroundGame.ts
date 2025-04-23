@@ -6,6 +6,7 @@ import { RenderSystem } from "@/engine/core/ecs/systems/RenderSystem";
 import { Entity } from "@/engine/core/ecs/base/Entity";
 import { ShipControlSystem } from "./systems/ShipControlSystem";
 import { createShipEntity } from "./entities/ShipEntity";
+import { ProjectileSystem } from "./systems/ProjectileSystem";
 
 /**
  * Configuração específica para o jogo FloatingAround
@@ -66,8 +67,9 @@ export class FloatingAroundGame extends BaseGame {
     this.world.addSystem(new PhysicsSystem());
     this.world.addSystem(new RenderSystem(true, [0, 0, 0.1, 0])); // Fundo transparente
 
-    // Sistema específico para controlar a nave com input do teclado
+    // Sistema específico para o game
     this.world.addSystem(new ShipControlSystem(this));
+    this.world.addSystem(new ProjectileSystem(this.world));
   }
 
   /**
