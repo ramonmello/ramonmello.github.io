@@ -26,7 +26,7 @@ export class WebGLContext {
     window.addEventListener("resize", () => this.resizeCanvas());
   }
 
-  private resizeCanvas() {
+  public resizeCanvas() {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
     this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
@@ -73,21 +73,21 @@ export class WebGLContext {
 /** Singleton interno **/
 let ctx: WebGLContext | null = null;
 
-/**
- * Inicializa o WebGLContext se ainda não existir.
- * Deve ser chamado **uma única vez** antes do startEngine.
- */
 export async function initWebGLContext(
   canvasEl: HTMLCanvasElement
 ): Promise<WebGLContext> {
+  // sempre atualiza o canvas (para lidar com novo elemento no React)
   if (!ctx) {
     ctx = new WebGLContext(canvasEl);
-    // carrega e inicializa shaders aqui
     const [vs, fs] = await Promise.all([
       fetch("/shaders/vertex.glsl").then((r) => r.text()),
       fetch("/shaders/fragment.glsl").then((r) => r.text()),
     ]);
     ctx.initShaders(vs, fs);
+  } else {
+    // reconfigura binding no novo canvas e viewport
+    ctx.canvas = canvasEl;
+    ctx.resizeCanvas();
   }
   return ctx;
 }
@@ -98,4 +98,8 @@ export async function initWebGLContext(
 export function getWebGLContext(): WebGLContext {
   if (!ctx) throw new Error("WebGLContext not initialized");
   return ctx;
+}
+
+export function clearWebGLContext(): void {
+  ctx = null;
 }

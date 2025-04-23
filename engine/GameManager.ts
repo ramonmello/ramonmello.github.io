@@ -2,7 +2,10 @@ import { Game, GameConfig } from "@/engine/games/base/Game";
 import { InputSystem } from "@/engine/core/input/InputSystem";
 import { KeyboardInputSystem } from "@/engine/core/input/KeyboardInputSystem";
 import { MessageBus } from "@/engine/core/messaging/MessageBus";
-import { initWebGLContext } from "@/engine/core/rendering/WebGLContext";
+import {
+  initWebGLContext,
+  clearWebGLContext,
+} from "@/engine/core/rendering/WebGLContext";
 import type { KeyboardHandler } from "@/hooks/useKeyboard";
 
 /**
@@ -42,46 +45,51 @@ export class GameManager {
    */
   private constructor() {}
 
+  /** Reconfigura o canvas no contexto WebGL sem reiniciar o jogo */
+  async rebindCanvas(canvas: HTMLCanvasElement): Promise<void> {
+    // força a reinicialização do binding do canvas
+    clearWebGLContext(); // limpa o singleton interno
+    await initWebGLContext(canvas);
+  }
+
   /**
    * Inicia um jogo
    * @param game Instância do jogo a ser iniciado
    * @param canvas Elemento canvas para renderização
-   * @param keyboard Objeto do manipulador de teclado
    * @param config Configuração opcional para o jogo
    * @returns Função para parar o jogo
    */
   async startGame(
     game: Game,
     canvas: HTMLCanvasElement,
-    keyboard: KeyboardHandler,
     config?: Partial<GameConfig>
   ): Promise<() => void> {
-    // Para o jogo atual se houver um
-    this.stopGame();
-
-    // Inicializa o contexto WebGL
+    if (!this.inputSystem) throw new Error("InputSystem não configurado");
+    // Inicializa / rebind canvas
     await initWebGLContext(canvas);
 
-    // Configura o sistema de input
+    // Se for a primeira vez
+    if (!this.hasActiveGame()) {
+      await game.initialize(undefined, config);
+      game.setInputSystem(this.inputSystem);
+      this.activeGame = game;
+      this.startGameLoop();
+      game.start();
+    } else {
+      // se já havia jogo, apenas rebind e retome loop
+      this.startGameLoop();
+      game.resume();
+    }
+
+    return () => this.pauseGame();
+  }
+
+  /** Substitui o InputSystem em runtime */
+  setInputHandler(keyboard: KeyboardHandler): void {
     this.inputSystem = new KeyboardInputSystem(keyboard);
-
-    // Inicializa o jogo
-    await game.initialize(undefined, config);
-
-    // Define o sistema de input no jogo
-    game.setInputSystem(this.inputSystem);
-
-    // Define como jogo ativo
-    this.activeGame = game;
-
-    // Inicia o loop do jogo
-    this.startGameLoop();
-
-    // Inicia o jogo
-    game.start();
-
-    // Retorna função para parar o jogo
-    return () => this.stopGame();
+    if (this.activeGame) {
+      this.activeGame.setInputSystem(this.inputSystem);
+    }
   }
 
   /**

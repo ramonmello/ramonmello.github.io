@@ -10,24 +10,29 @@ export default function Home() {
   const keyboard = useKeyboard();
 
   useEffect(() => {
-    let dispose: (() => void) | undefined;
+    // let dispose: (() => void) | undefined;
     let cancelled = false;
 
     (async () => {
       if (cancelled || !canvasRef.current) return;
 
-      // Iniciar o jogo FloatingAround
-      dispose = await GameManager.getInstance().startGame(
-        floatingAroundGame,
-        canvasRef.current,
-        keyboard
-      );
+      const manager = GameManager.getInstance();
+      manager.setInputHandler(keyboard);
+      if (manager.hasActiveGame()) {
+        // estamos voltando à Home: só rebind e resume
+        await manager.rebindCanvas(canvasRef.current!);
+        manager.resumeGame();
+      } else {
+        // primeira vez: inicializa tudo
+        // dispose = await manager.startGame(
+        await manager.startGame(floatingAroundGame, canvasRef.current!);
+      }
     })();
 
     return () => {
       cancelled = true;
-      dispose?.();
-      GameManager.getInstance().stopGame();
+      // só pausar, para manter estado
+      GameManager.getInstance().pauseGame();
     };
   }, [keyboard]);
 
