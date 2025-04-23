@@ -7,7 +7,7 @@ import {
   AsteroidComponent,
   AsteroidSize,
 } from "../components/AsteroidComponent";
-import { getWebGLContext } from "../../../core/rendering/WebGLContext";
+import { getWebGLContext } from "../../../../core/rendering/WebGLContext";
 
 /**
  * Cria uma entidade de asteroide

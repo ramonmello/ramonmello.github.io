@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { GameManager } from "@/engine/GameManager";
-import { AsteroidGame } from "@/engine/games/asteroid";
+import { AsteroidGame } from "@/engine/games/examples/asteroid";
 
 export function ScoreHUD() {
   const [score, setScore] = useState(0);

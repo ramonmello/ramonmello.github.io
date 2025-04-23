@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { GameManager } from "@/engine/GameManager";
-import { AsteroidGame } from "@/engine/games/asteroid";
+import { AsteroidGame } from "@/engine/games/examples/asteroid";
 import { useGameStore } from "@/engine/store/gameStore";
 
 export function GameOverModal({ onPlayAgain }: { onPlayAgain(): void }) {
