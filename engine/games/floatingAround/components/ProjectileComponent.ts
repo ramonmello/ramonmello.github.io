@@ -13,14 +13,8 @@ export class ProjectileComponent extends Component {
     return ProjectileComponent.TYPE;
   }
 
-  /** Tempo de vida do projétil em frames */
-  // lifespan: number;
-
   /**Tempo de vida restante do projétil em segundos */
   remainingTime: number;
-
-  /** Tempo decorrido desde a criação */
-  age: number = 0;
 
   /** Dano causado pelo projétil */
   damage: number = 1;
@@ -55,6 +49,6 @@ export class ProjectileComponent extends Component {
    * @returns true se expirou, false caso contrário
    */
   hasExpired(): boolean {
-    return this.age >= this.lifespan;
+    return this.remainingTime <= 0;
   }
 }

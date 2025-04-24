@@ -21,6 +21,9 @@ export class ShipControlSystem extends System {
 
   private game: FloatingAroundGame;
 
+  /** só para edge-detection no System */
+  private prevFiring = false;
+
   constructor(game: FloatingAroundGame) {
     super();
     this.game = game;
@@ -78,7 +81,7 @@ export class ShipControlSystem extends System {
       }
 
       // Atirar
-      if (actions.fire && player.canShoot()) {
+      if (actions.fire && !this.prevFiring && player.canShoot()) {
         player.shoot();
 
         // Emite evento de tiro para criar o projétil
@@ -88,6 +91,8 @@ export class ShipControlSystem extends System {
           velocity: { ...physics.velocity },
         });
       }
+
+      this.prevFiring = actions.fire;
     });
   }
 }
