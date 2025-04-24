@@ -6,17 +6,10 @@ import { getWebGLContext } from "@/engine/core/rendering/Context";
 import { TARGET_FPS } from "@/engine/core/config/time";
 
 export class PhysicsSystem extends System {
-  /** Define quais componentes uma entidade deve ter para ser processada */
   readonly componentTypes = [TransformComponent.TYPE, PhysicsComponent.TYPE];
 
-  /** Prioridade de execução (menor = executa primeiro) */
   priority = 10;
 
-  /**
-   * Atualiza a física de todas as entidades elegíveis
-   * @param entities Lista de entidades que possuem TransformComponent e PhysicsComponent
-   * @param deltaTime Tempo desde a última atualização em segundos
-   */
   update(entities: Entity[], deltaTime: number): void {
     const timeScale = deltaTime * TARGET_FPS;
 

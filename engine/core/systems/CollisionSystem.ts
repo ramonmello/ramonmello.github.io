@@ -8,16 +8,10 @@ import {
 import { COLLISION_EVENTS } from "@/engine/core/messaging/MessageTypes";
 
 export class CollisionSystem extends System {
-  /** Define quais componentes uma entidade deve ter para ser processada */
   readonly componentTypes = [TransformComponent.TYPE, ColliderComponent.TYPE];
 
-  /** Prioridade de execução (médio - após física, antes de renderização) */
   priority = 50;
 
-  /**
-   * Detecta colisões entre entidades
-   * @param entities Lista de entidades que possuem TransformComponent e ColliderComponent
-   */
   update(entities: Entity[]): void {
     const activeEntities = entities.filter((entity) => {
       const collider = entity.getComponent<ColliderComponent>(
@@ -61,12 +55,6 @@ export class CollisionSystem extends System {
     }
   }
 
-  /**
-   * Verifica se duas entidades estão colidindo
-   * @param entityA Primeira entidade
-   * @param entityB Segunda entidade
-   * @returns true se há colisão, false caso contrário
-   */
   private checkCollision(entityA: Entity, entityB: Entity): boolean {
     const transformA = entityA.getComponent<TransformComponent>(
       TransformComponent.TYPE
@@ -152,9 +140,6 @@ export class CollisionSystem extends System {
     );
   }
 
-  /**
-   * Detecta colisão entre dois círculos
-   */
   private circleCircleCollision(
     posA: { x: number; y: number },
     radiusA: number,
@@ -168,9 +153,6 @@ export class CollisionSystem extends System {
     return distance < radiusA + radiusB;
   }
 
-  /**
-   * Detecta colisão entre dois retângulos
-   */
   private rectRectCollision(
     posA: { x: number; y: number },
     widthA: number,
@@ -202,9 +184,6 @@ export class CollisionSystem extends System {
     );
   }
 
-  /**
-   * Detecta colisão entre um círculo e um retângulo
-   */
   private circleRectCollision(
     circlePos: { x: number; y: number },
     radius: number,

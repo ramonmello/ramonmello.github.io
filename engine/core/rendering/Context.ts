@@ -1,7 +1,3 @@
-/**
- * WebGLContext.ts — encapsula o contexto WebGL, buffers e locais de atributos/uniforms
- */
-
 export class WebGLContext {
   public gl: WebGLRenderingContext;
   public canvas: HTMLCanvasElement;
@@ -21,7 +17,6 @@ export class WebGLContext {
     if (!gl) throw new Error("WebGL not supported");
     this.gl = gl;
 
-    // dimensiona o canvas pra viewport inteira
     this.resizeCanvas();
     window.addEventListener("resize", () => this.resizeCanvas());
   }
@@ -32,9 +27,6 @@ export class WebGLContext {
     this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  /**
-   * Compila shaders e linka o programa, atribui buffers e locais
-   */
   public initShaders(vertexSource: string, fragmentSource: string) {
     const { gl } = this;
 
@@ -70,13 +62,11 @@ export class WebGLContext {
   }
 }
 
-/** Singleton interno **/
 let ctx: WebGLContext | null = null;
 
 export async function initWebGLContext(
   canvasEl: HTMLCanvasElement
 ): Promise<WebGLContext> {
-  // sempre atualiza o canvas (para lidar com novo elemento no React)
   if (!ctx) {
     ctx = new WebGLContext(canvasEl);
     const [vs, fs] = await Promise.all([
@@ -85,16 +75,12 @@ export async function initWebGLContext(
     ]);
     ctx.initShaders(vs, fs);
   } else {
-    // reconfigura binding no novo canvas e viewport
     ctx.canvas = canvasEl;
     ctx.resizeCanvas();
   }
   return ctx;
 }
-/**
- * Retorna o WebGLContext já inicializado.
- * Lança erro se ainda não tiver sido criado.
- */
+
 export function getWebGLContext(): WebGLContext {
   if (!ctx) throw new Error("WebGLContext not initialized");
   return ctx;

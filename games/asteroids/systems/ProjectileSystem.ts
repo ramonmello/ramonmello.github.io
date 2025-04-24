@@ -35,10 +35,6 @@ export class ProjectileSystem extends System {
     OFFSET_DISTANCE: 20,
   };
 
-  /**
-   * Construtor
-   * @param world Referência ao mundo
-   */
   constructor(world: World) {
     super();
     this.world = world;
@@ -53,18 +49,10 @@ export class ProjectileSystem extends System {
     });
   }
 
-  /**
-   * Atualiza os projéteis existentes
-   * @param entities Lista de entidades de projéteis
-   */
   update(entities: Entity[], deltaTime: number): void {
     entities.forEach((entity) => this.updateProjectile(entity, deltaTime));
   }
 
-  /**
-   * Atualiza um projétil individual
-   * @param entity Entidade do projétil
-   */
   private updateProjectile(entity: Entity, deltaTime: number): void {
     const projectile = entity.getComponent<ProjectileComponent>(
       ProjectileComponent.TYPE
@@ -81,10 +69,6 @@ export class ProjectileSystem extends System {
     }
   }
 
-  /**
-   * Cria um novo projétil
-   * @param data Dados do tiro (posição, rotação, etc)
-   */
   private createProjectile(data: FireData): void {
     if (!this.world) return;
 
@@ -109,9 +93,6 @@ export class ProjectileSystem extends System {
     this.world.addEntity(projectile);
   }
 
-  /**
-   * Calcula a posição inicial do projétil
-   */
   private calculateProjectilePosition(
     position: { x: number; y: number },
     rotation: number
@@ -127,9 +108,6 @@ export class ProjectileSystem extends System {
     };
   }
 
-  /**
-   * Calcula a velocidade do projétil
-   */
   private calculateProjectileVelocity(
     rotation: number,
     shipVelocity?: { x: number; y: number }
@@ -145,9 +123,6 @@ export class ProjectileSystem extends System {
     };
   }
 
-  /**
-   * Cria uma entidade de projétil com todos os componentes necessários
-   */
   private createProjectileEntity(
     position: { x: number; y: number },
     rotation: number,

@@ -5,23 +5,14 @@ import { RenderComponent } from "@/engine/core/components/RenderComponent";
 import { getWebGLContext } from "@/engine/core/rendering/Context";
 
 export class RenderSystem extends System {
-  /** Define quais componentes uma entidade deve ter para ser processada */
   readonly componentTypes = [TransformComponent.TYPE, RenderComponent.TYPE];
 
-  /** Prioridade de execução (maior = executa por último) */
   priority = 100;
 
-  /** Indica se deve limpar a tela antes de renderizar */
   private clearScreen: boolean = true;
 
-  /** Cor de fundo */
   private backgroundColor: [number, number, number, number] = [0, 0, 0, 1];
 
-  /**
-   * Construtor
-   * @param clearScreen Se true, limpa a tela antes de renderizar
-   * @param backgroundColor Cor de fundo RGBA (0-1)
-   */
   constructor(
     clearScreen: boolean = true,
     backgroundColor: [number, number, number, number] = [0, 0, 0, 1]
@@ -31,10 +22,6 @@ export class RenderSystem extends System {
     this.backgroundColor = backgroundColor;
   }
 
-  /**
-   * Renderiza todas as entidades elegíveis
-   * @param entities Lista de entidades que possuem TransformComponent e RenderComponent
-   */
   update(entities: Entity[]): void {
     const { gl, canvas, positionBuffer, locs } = getWebGLContext();
 
@@ -116,21 +103,10 @@ export class RenderSystem extends System {
     });
   }
 
-  /**
-   * Define se deve limpar a tela antes de renderizar
-   * @param clear Se true, limpa a tela antes de renderizar
-   */
   setClearScreen(clear: boolean): void {
     this.clearScreen = clear;
   }
 
-  /**
-   * Define a cor de fundo
-   * @param r Componente vermelho (0-1)
-   * @param g Componente verde (0-1)
-   * @param b Componente azul (0-1)
-   * @param a Componente alfa (0-1)
-   */
   setBackgroundColor(r: number, g: number, b: number, a: number = 1): void {
     this.backgroundColor = [r, g, b, a];
   }

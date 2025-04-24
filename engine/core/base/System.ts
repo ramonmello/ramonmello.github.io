@@ -20,10 +20,5 @@ export abstract class System {
 
   init?(world: World): void;
 
-  /**
-   * Processa todas as entidades elegíveis
-   * @param entities Lista de entidades a serem processadas
-   * @param deltaTime Tempo desde a última atualização
-   */
   abstract update(entities: Entity[], deltaTime: number): void;
 }

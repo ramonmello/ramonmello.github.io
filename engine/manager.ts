@@ -35,13 +35,6 @@ export class Manager {
     await initWebGLContext(canvas);
   }
 
-  /**
-   * Inicia um jogo
-   * @param game Instância do jogo a ser iniciado
-   * @param canvas Elemento canvas para renderização
-   * @param config Configuração opcional para o jogo
-   * @returns Função para parar o jogo
-   */
   async startGame(
     game: Game,
     canvas: HTMLCanvasElement,
