@@ -65,10 +65,8 @@ export class ShipControlSystem extends System {
         player.thrusting = true;
 
         // Calcula vetor de aceleração com base na rotação
-        const thrustX =
-          -Math.sin(transform.rotation) * player.thrustPower * timeScale;
-        const thrustY =
-          Math.cos(transform.rotation) * player.thrustPower * timeScale;
+        const thrustX = -Math.sin(transform.rotation) * player.thrustPower;
+        const thrustY = Math.cos(transform.rotation) * player.thrustPower;
 
         // Aplica aceleração
         physics.applyForce(thrustX, thrustY);
