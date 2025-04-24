@@ -34,7 +34,7 @@ export function createShipEntity(config?: FloatingAroundGameConfig): Entity {
   render.setColor(1, 1, 1, 1); // Branco
 
   // Componente de física
-  const physics = new PhysicsComponent(0.98, true, 0.5, 5);
+  const physics = new PhysicsComponent(0.98, true, 1, 10);
 
   // Componente de colisão
   const collider = ColliderComponent.createCircle(12);

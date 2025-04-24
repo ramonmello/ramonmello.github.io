@@ -49,6 +49,23 @@ export class PhysicsSystem extends System {
       physics.velocity.x *= Math.pow(physics.friction, timeScale);
       physics.velocity.y *= Math.pow(physics.friction, timeScale);
 
+      // -----------------------------------------------------------------
+      //  NOVO BLOCO: garante que a velocidade não passe de maxSpeed
+      // -----------------------------------------------------------------
+      // O que ele faz?
+      // Calcula a velocidade atual (speed) usando Pitágoras (√(vx² + vy²)).
+      // Se essa velocidade for maior que maxSpeed, multiplica vx e vy por um fator de escala que
+      // reduz o módulo do vetor exatamente até o limite.
+
+      if (physics.maxSpeed !== undefined) {
+        const speed = Math.hypot(physics.velocity.x, physics.velocity.y);
+        if (speed > physics.maxSpeed) {
+          const factor = physics.maxSpeed / speed;
+          physics.velocity.x *= factor;
+          physics.velocity.y *= factor;
+        }
+      }
+
       // Zera velocidades muito pequenas para evitar cálculos desnecessários
       if (Math.abs(physics.velocity.x) < 0.001) physics.velocity.x = 0;
       if (Math.abs(physics.velocity.y) < 0.001) physics.velocity.y = 0;
