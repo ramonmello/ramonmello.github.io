@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { useKeyboard } from "@/hooks/useKeyboard";
-import { floatingAroundGame } from "@/engine/games/floatingAround";
+import { asteroidsGame } from "@/engine/games/asteroids";
 import { GameManager } from "@/engine/GameManager";
 
 export default function Home() {
@@ -10,7 +10,6 @@ export default function Home() {
   const keyboard = useKeyboard();
 
   useEffect(() => {
-    // let dispose: (() => void) | undefined;
     let cancelled = false;
 
     (async () => {
@@ -19,19 +18,15 @@ export default function Home() {
       const manager = GameManager.getInstance();
       manager.setInputHandler(keyboard);
       if (manager.hasActiveGame()) {
-        // estamos voltando à Home: só rebind e resume
         await manager.rebindCanvas(canvasRef.current!);
         manager.resumeGame();
       } else {
-        // primeira vez: inicializa tudo
-        // dispose = await manager.startGame(
-        await manager.startGame(floatingAroundGame, canvasRef.current!);
+        await manager.startGame(asteroidsGame, canvasRef.current!);
       }
     })();
 
     return () => {
       cancelled = true;
-      // só pausar, para manter estado
       GameManager.getInstance().pauseGame();
     };
   }, [keyboard]);

@@ -8,34 +8,19 @@ import { ShipControlSystem } from "./systems/ShipControlSystem";
 import { createShipEntity } from "./entities/ShipEntity";
 import { ProjectileSystem } from "./systems/ProjectileSystem";
 
-/**
- * Configuração específica para o jogo FloatingAround
- */
-export interface FloatingAroundGameConfig extends GameConfig {
-  /** Velocidade de rotação da nave */
+export interface AsteroidsGameConfig extends GameConfig {
   rotationSpeed: number;
-
-  /** Força de aceleração da nave */
   thrustForce: number;
 }
 
-/**
- * Implementação do jogo FloatingAround - apenas navegação com a nave
- */
-export class FloatingAroundGame extends BaseGame {
-  /** Nome do jogo */
-  name = "FloatingAround";
+export class AsteroidsGame extends BaseGame {
+  name = "Asteroids";
 
-  /** Descrição do jogo */
-  description = "Apenas flutue pelo espaço controlando uma nave";
+  description = "Arcade-style, multidirectional space shooter";
 
-  /** Referência para a entidade da nave */
   private shipEntity?: Entity;
 
-  /**
-   * Retorna a configuração padrão para o jogo FloatingAround
-   */
-  protected getDefaultConfig(): FloatingAroundGameConfig {
+  protected getDefaultConfig(): AsteroidsGameConfig {
     return {
       canvasWidth: 800,
       canvasHeight: 600,
@@ -45,38 +30,24 @@ export class FloatingAroundGame extends BaseGame {
     };
   }
 
-  /**
-   * Obtém a configuração específica para o jogo FloatingAround
-   */
-  getConfig(): FloatingAroundGameConfig {
-    return this.config as FloatingAroundGameConfig;
+  getConfig(): AsteroidsGameConfig {
+    return this.config as AsteroidsGameConfig;
   }
 
-  /**
-   * Inicializa o jogo
-   */
   async initialize(world?: World, config?: Partial<GameConfig>): Promise<void> {
     await super.initialize(world, config);
   }
 
-  /**
-   * Cria os sistemas necessários para o jogo
-   */
   protected createSystems(): void {
-    // Sistemas básicos necessários
     this.world.addSystem(new PhysicsSystem());
-    this.world.addSystem(new RenderSystem(true, [0, 0, 0.1, 0])); // Fundo transparente
+    this.world.addSystem(new RenderSystem(true, [0, 0, 0.1, 0]));
 
-    // Sistema específico para o game
     this.world.addSystem(new ShipControlSystem(this));
     this.world.addSystem(new ProjectileSystem(this.world));
   }
 
-  /**
-   * Cria a entidade da nave
-   */
   private createShip(): void {
-    this.shipEntity = createShipEntity(this.getConfig());
+    this.shipEntity = createShipEntity();
     this.world.addEntity(this.shipEntity);
   }
 

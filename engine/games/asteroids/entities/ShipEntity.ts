@@ -4,7 +4,6 @@ import { RenderComponent } from "@/engine/core/ecs/components/RenderComponent";
 import { PhysicsComponent } from "@/engine/core/ecs/components/PhysicsComponent";
 import { ColliderComponent } from "@/engine/core/ecs/components/ColliderComponent";
 import { ShipComponent } from "../components/ShipComponent";
-import { FloatingAroundGameConfig } from "../FloatingAroundGame";
 import { getWebGLContext } from "@/engine/core/rendering/WebGLContext";
 
 /**
@@ -12,7 +11,7 @@ import { getWebGLContext } from "@/engine/core/rendering/WebGLContext";
  * @param config Configuração do jogo
  * @returns Entidade da nave do jogador
  */
-export function createShipEntity(config?: FloatingAroundGameConfig): Entity {
+export function createShipEntity(): Entity {
   const { canvas } = getWebGLContext();
 
   // Cria a entidade com ID e nome

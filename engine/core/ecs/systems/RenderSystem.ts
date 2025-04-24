@@ -4,15 +4,12 @@ import { TransformComponent } from "@/engine/core/ecs/components/TransformCompon
 import { RenderComponent } from "@/engine/core/ecs/components/RenderComponent";
 import { getWebGLContext } from "@/engine/core/rendering/WebGLContext";
 
-/**
- * Sistema que renderiza as entidades na tela
- */
 export class RenderSystem extends System {
   /** Define quais componentes uma entidade deve ter para ser processada */
   readonly componentTypes = [TransformComponent.TYPE, RenderComponent.TYPE];
 
   /** Prioridade de execução (maior = executa por último) */
-  priority = 100; // Renderização deve ser um dos últimos sistemas executados
+  priority = 100;
 
   /** Indica se deve limpar a tela antes de renderizar */
   private clearScreen: boolean = true;
@@ -41,7 +38,6 @@ export class RenderSystem extends System {
   update(entities: Entity[]): void {
     const { gl, canvas, positionBuffer, locs } = getWebGLContext();
 
-    // Limpa a tela se configurado
     if (this.clearScreen) {
       gl.clearColor(
         this.backgroundColor[0],
@@ -52,11 +48,9 @@ export class RenderSystem extends System {
       gl.clear(gl.COLOR_BUFFER_BIT);
     }
 
-    // Habilita blending para suportar transparência
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-    // Ordena entidades por zIndex para garantir que sejam renderizadas na ordem correta
     const orderedEntities = entities
       .filter((entity) => {
         const render = entity.getComponent<RenderComponent>(
@@ -71,19 +65,16 @@ export class RenderSystem extends System {
         return renderA.zIndex - renderB.zIndex;
       });
 
-    // Renderiza cada entidade
     orderedEntities.forEach((entity) => {
       const transform = entity.getComponent<TransformComponent>(
         TransformComponent.TYPE
       );
       const render = entity.getComponent<RenderComponent>(RenderComponent.TYPE);
 
-      if (!transform || !render) return; // Validação adicional
+      if (!transform || !render) return;
 
-      // Configurar programa
       gl.useProgram(locs.program);
 
-      // Configurar uniforms
       gl.uniform2f(locs.u_resolution, canvas.width, canvas.height);
       gl.uniform2f(
         locs.u_translation,
@@ -99,13 +90,11 @@ export class RenderSystem extends System {
         render.color.a
       );
 
-      // Associar vértices
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, render.vertices, gl.STATIC_DRAW);
       gl.enableVertexAttribArray(locs.a_position);
       gl.vertexAttribPointer(locs.a_position, 2, gl.FLOAT, false, 0, 0);
 
-      // Determinar modo de desenho
       let drawMode: number;
       switch (render.drawMode) {
         case "line_loop":
@@ -123,7 +112,6 @@ export class RenderSystem extends System {
           break;
       }
 
-      // Renderizar
       gl.drawArrays(drawMode, 0, render.vertices.length / 2);
     });
   }

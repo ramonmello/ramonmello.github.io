@@ -7,9 +7,6 @@ import {
 } from "@/engine/core/ecs/components/ColliderComponent";
 import { COLLISION_EVENTS } from "@/engine/core/messaging/MessageTypes";
 
-/**
- * Sistema que detecta e notifica colisões entre entidades
- */
 export class CollisionSystem extends System {
   /** Define quais componentes uma entidade deve ter para ser processada */
   readonly componentTypes = [TransformComponent.TYPE, ColliderComponent.TYPE];
@@ -22,7 +19,6 @@ export class CollisionSystem extends System {
    * @param entities Lista de entidades que possuem TransformComponent e ColliderComponent
    */
   update(entities: Entity[]): void {
-    // Filtra apenas entidades com colisores ativos
     const activeEntities = entities.filter((entity) => {
       const collider = entity.getComponent<ColliderComponent>(
         ColliderComponent.TYPE
@@ -30,7 +26,6 @@ export class CollisionSystem extends System {
       return collider && collider.active;
     });
 
-    // Verifica colisões entre cada par de entidades
     for (let i = 0; i < activeEntities.length; i++) {
       const entityA = activeEntities[i];
       const colliderA = entityA.getComponent<ColliderComponent>(
@@ -43,12 +38,9 @@ export class CollisionSystem extends System {
           ColliderComponent.TYPE
         )!;
 
-        // Verifica se os colisores podem colidir entre si
         if (!colliderA.canCollideWith(colliderB)) continue;
 
-        // Detecta colisão
         if (this.checkCollision(entityA, entityB)) {
-          // Emite evento de colisão
           this.world?.emit(COLLISION_EVENTS.DETECT, {
             entityA,
             entityB,
@@ -56,7 +48,6 @@ export class CollisionSystem extends System {
             colliderB,
           });
 
-          // Se nenhum dos colisores é trigger, emite evento de resolução
           if (!colliderA.isTrigger && !colliderB.isTrigger) {
             this.world?.emit(COLLISION_EVENTS.RESOLVE, {
               entityA,
@@ -91,7 +82,6 @@ export class CollisionSystem extends System {
       ColliderComponent.TYPE
     )!;
 
-    // Posições absolutas dos colisores (considerando o offset)
     const posA = {
       x: transformA.position.x + colliderA.offset.x,
       y: transformA.position.y + colliderA.offset.y,
@@ -102,9 +92,6 @@ export class CollisionSystem extends System {
       y: transformB.position.y + colliderB.offset.y,
     };
 
-    // Detecção de colisão baseada nos tipos de colisores
-
-    // Caso 1: Círculo vs Círculo
     if (
       colliderA.colliderType === ColliderType.Circle &&
       colliderB.colliderType === ColliderType.Circle
@@ -117,7 +104,6 @@ export class CollisionSystem extends System {
       );
     }
 
-    // Caso 2: Retângulo vs Retângulo
     if (
       colliderA.colliderType === ColliderType.Rectangle &&
       colliderB.colliderType === ColliderType.Rectangle
@@ -132,7 +118,6 @@ export class CollisionSystem extends System {
       );
     }
 
-    // Caso 3: Círculo vs Retângulo
     if (
       colliderA.colliderType === ColliderType.Circle &&
       colliderB.colliderType === ColliderType.Rectangle
@@ -146,7 +131,6 @@ export class CollisionSystem extends System {
       );
     }
 
-    // Caso 4: Retângulo vs Círculo
     if (
       colliderA.colliderType === ColliderType.Rectangle &&
       colliderB.colliderType === ColliderType.Circle
@@ -160,8 +144,6 @@ export class CollisionSystem extends System {
       );
     }
 
-    // Para outros tipos de colisores (incluindo polígonos),
-    // usamos uma detecção de colisão simplificada por enquanto
     return this.circleCircleCollision(
       posA,
       Math.max(colliderA.radius || 0, 10),
@@ -179,12 +161,10 @@ export class CollisionSystem extends System {
     posB: { x: number; y: number },
     radiusB: number
   ): boolean {
-    // Calcula a distância entre os centros
     const dx = posA.x - posB.x;
     const dy = posA.y - posB.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    // Colisão ocorre quando a distância é menor que a soma dos raios
     return distance < radiusA + radiusB;
   }
 
@@ -199,13 +179,11 @@ export class CollisionSystem extends System {
     widthB: number,
     heightB: number
   ): boolean {
-    // Calcula metade das dimensões
     const halfWidthA = widthA / 2;
     const halfHeightA = heightA / 2;
     const halfWidthB = widthB / 2;
     const halfHeightB = heightB / 2;
 
-    // Calcula bordas dos retângulos
     const leftA = posA.x - halfWidthA;
     const rightA = posA.x + halfWidthA;
     const topA = posA.y - halfHeightA;
@@ -216,7 +194,6 @@ export class CollisionSystem extends System {
     const topB = posB.y - halfHeightB;
     const bottomB = posB.y + halfHeightB;
 
-    // Verifica se não há separação
     return !(
       rightA < leftB ||
       leftA > rightB ||
@@ -235,23 +212,18 @@ export class CollisionSystem extends System {
     width: number,
     height: number
   ): boolean {
-    // Calcula metade das dimensões do retângulo
     const halfWidth = width / 2;
     const halfHeight = height / 2;
 
-    // Calcula a distância entre o centro do círculo e o centro do retângulo
     const dx = Math.abs(circlePos.x - rectPos.x);
     const dy = Math.abs(circlePos.y - rectPos.y);
 
-    // Se a distância for maior que metade da largura/altura + raio, não há colisão
     if (dx > halfWidth + radius) return false;
     if (dy > halfHeight + radius) return false;
 
-    // Se a distância for menor que metade da largura/altura, há colisão
     if (dx <= halfWidth) return true;
     if (dy <= halfHeight) return true;
 
-    // Verifica a distância entre o centro do círculo e o canto mais próximo do retângulo
     const cornerDistanceSq =
       Math.pow(dx - halfWidth, 2) + Math.pow(dy - halfHeight, 2);
 

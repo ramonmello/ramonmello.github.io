@@ -1,16 +1,9 @@
 import type { KeyboardHandler } from "@/hooks/useKeyboard";
 import { InputSystem } from "./InputSystem";
 
-/**
- * Adaptador que converte o hook useKeyboard existente para
- * a interface InputSystem
- */
 export class KeyboardInputSystem implements InputSystem {
   constructor(private keyboard: KeyboardHandler) {}
 
-  /**
-   * Converte estados de teclas para um vetor de direção
-   */
   getDirection(): { x: number; y: number } {
     const keys = this.keyboard.getState();
     return {
@@ -19,11 +12,6 @@ export class KeyboardInputSystem implements InputSystem {
     };
   }
 
-  /**
-   * Mapeia teclas específicas para ações semânticas
-   * TODO: Abstrair mapeamento para permitir configurações customizadas
-   * para jogos diferentes
-   */
   getActions(): { [key: string]: boolean } {
     const keys = this.keyboard.getState();
     return {
@@ -32,10 +20,5 @@ export class KeyboardInputSystem implements InputSystem {
     };
   }
 
-  /**
-   * O hook já atualiza automaticamente, então não há nada a fazer aqui
-   */
-  update(): void {
-    // O hook useKeyboard atualiza automaticamente
-  }
+  update(): void {}
 }

@@ -1,23 +1,15 @@
 import { Component } from "@/engine/core/ecs/base/Component";
 import { Vector2 } from "./TransformComponent";
 
-/**
- * Tipos de colisores suportados
- */
 export enum ColliderType {
-  Circle, // Colisão circular
-  Rectangle, // Colisão retangular
-  Polygon, // Colisão poligonal
+  Circle,
+  Rectangle,
+  Polygon,
 }
 
-/**
- * Componente que define as propriedades de colisão de uma entidade
- */
 export class ColliderComponent extends Component {
-  /** Tipo único do componente */
   static readonly TYPE = "collider";
 
-  /** Implementação do getter de tipo exigido pela classe Component */
   get type(): string {
     return ColliderComponent.TYPE;
   }

@@ -4,29 +4,19 @@ import {
   MessageBus,
   MessageData,
   MessageHandler,
-} from "../../messaging/MessageBus";
+} from "@/engine/core/messaging/MessageBus";
 
-/**
- * Gerenciador central do ECS que mantém entidades e sistemas.
- * Coordena a interação entre sistemas e entidades.
- */
 export class World {
-  /** Mapa de entidades por ID */
   private entities: Map<string, Entity> = new Map();
 
-  /** Lista de sistemas ordenada por prioridade */
   private systems: System[] = [];
 
-  /** Tempo acumulado desde o início */
   private elapsedTime: number = 0;
 
-  /** Última vez que update foi chamado */
   private lastUpdateTime: number = 0;
 
-  /** Lista de disposers para remover listeners de mensagens */
   private messageDisposers: Array<() => void> = [];
 
-  /** Indica se o mundo está em execução */
   private running: boolean = false;
 
   /**
@@ -62,9 +52,6 @@ export class World {
     return this.entities.get(id);
   }
 
-  /**
-   * Retorna todas as entidades
-   */
   getAllEntities(): Entity[] {
     return Array.from(this.entities.values());
   }
@@ -78,10 +65,8 @@ export class World {
     system.setWorld(this);
     this.systems.push(system);
 
-    // Ordena sistemas por prioridade
     this.systems.sort((a, b) => a.priority - b.priority);
 
-    // Inicializa o sistema se tiver método init
     if (system.init) {
       system.init(this);
     }
@@ -113,17 +98,11 @@ export class World {
     return this;
   }
 
-  /**
-   * Remove todos os listeners de mensagens registrados por este mundo
-   */
   clearAllListeners(): void {
     this.messageDisposers.forEach((disposer) => disposer());
     this.messageDisposers = [];
   }
 
-  /**
-   * Inicia o mundo
-   */
   start(): void {
     if (!this.running) {
       this.running = true;
@@ -131,9 +110,6 @@ export class World {
     }
   }
 
-  /**
-   * Para o mundo
-   */
   stop(): void {
     if (this.running) {
       this.running = false;
@@ -148,27 +124,21 @@ export class World {
   update(deltaTime: number): void {
     if (!this.running) return;
 
-    // Atualiza tempo acumulado
     this.elapsedTime += deltaTime;
     this.lastUpdateTime = performance.now();
 
-    // Emite evento de pré-atualização
     this.emit("preUpdate", { deltaTime });
 
-    // Para cada sistema ativo
     for (const system of this.systems) {
       if (!system.enabled) continue;
 
-      // Filtra entidades que o sistema deve processar
       const eligibleEntities = Array.from(this.entities.values()).filter(
         (entity) => system.shouldProcessEntity(entity)
       );
 
-      // Atualiza o sistema com as entidades elegíveis
       system.update(eligibleEntities, deltaTime);
     }
 
-    // Emite evento de pós-atualização
     this.emit("postUpdate", { deltaTime });
   }
 
@@ -193,21 +163,16 @@ export class World {
    * Limpa todas as entidades e sistemas
    */
   clear(): void {
-    // Destrói todas as entidades
     this.entities.forEach((entity) => entity.destroy());
     this.entities.clear();
 
-    // Limpa sistemas
     this.systems = [];
 
-    // Limpa listeners
     this.clearAllListeners();
 
-    // Reseta timers
     this.elapsedTime = 0;
     this.lastUpdateTime = 0;
 
-    // Emite evento
     this.emit("worldCleared", {});
   }
 

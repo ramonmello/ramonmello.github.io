@@ -5,21 +5,13 @@ import {
   MessageHandler,
 } from "@/engine/core/messaging/MessageBus";
 
-/**
- * Representa uma entidade no sistema ECS.
- * Uma entidade é um container de componentes que define um objeto no jogo.
- */
 export class Entity {
-  /** Identificador único da entidade */
   id: string;
 
-  /** Mapa de componentes anexados à entidade */
   components: Map<string, Component>;
 
-  /** Nome opcional da entidade para depuração */
   name?: string;
 
-  /** Lista de disposers para limpar listeners de mensagens */
   private messageDisposers: Array<() => void> = [];
 
   /**
@@ -42,7 +34,6 @@ export class Entity {
     component.entity = this;
     this.components.set(component.type, component);
 
-    // Chama o método onAttach se existir
     if (component.onAttach) {
       component.onAttach();
     }
@@ -76,7 +67,6 @@ export class Entity {
   removeComponent(type: string): boolean {
     const component = this.components.get(type);
     if (component) {
-      // Chama o método onDetach se existir
       if (component.onDetach) {
         component.onDetach();
       }
@@ -113,24 +103,16 @@ export class Entity {
     return this;
   }
 
-  /**
-   * Remove todos os listeners de mensagens registrados por esta entidade
-   */
   clearAllListeners(): void {
     this.messageDisposers.forEach((disposer) => disposer());
     this.messageDisposers = [];
   }
 
-  /**
-   * Destrói a entidade, desanexando componentes e limpando recursos
-   */
   destroy(): void {
-    // Remove todos os componentes e chama seus métodos onDetach
     Array.from(this.components.keys()).forEach((type) => {
       this.removeComponent(type);
     });
 
-    // Remove todos os listeners de mensagens
     this.clearAllListeners();
   }
 }
