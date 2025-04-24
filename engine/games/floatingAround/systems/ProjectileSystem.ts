@@ -39,7 +39,7 @@ export class ProjectileSystem extends System {
   // Configurações dos projéteis
   private static readonly CONFIG = {
     SPEED: 7,
-    LIFESPAN: 120, // em frames
+    LIFESPAN: 1.5, // em frames
     SIZE: 2,
     OFFSET_DISTANCE: 20, // distância da ponta da nave
   };
@@ -71,15 +71,15 @@ export class ProjectileSystem extends System {
    * Atualiza os projéteis existentes
    * @param entities Lista de entidades de projéteis
    */
-  update(entities: Entity[]): void {
-    entities.forEach(this.updateProjectile.bind(this));
+  update(entities: Entity[], deltaTime: number): void {
+    entities.forEach((entity) => this.updateProjectile(entity, deltaTime));
   }
 
   /**
    * Atualiza um projétil individual
    * @param entity Entidade do projétil
    */
-  private updateProjectile(entity: Entity): void {
+  private updateProjectile(entity: Entity, deltaTime: number): void {
     const projectile = entity.getComponent<ProjectileComponent>(
       ProjectileComponent.TYPE
     );
@@ -87,7 +87,7 @@ export class ProjectileSystem extends System {
     if (!projectile) return;
 
     // Atualiza o componente do projétil
-    const expired = projectile.update();
+    const expired = projectile.update(deltaTime);
 
     // Remove o projétil se expirou
     if (expired && this.world) {
