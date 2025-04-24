@@ -1,5 +1,5 @@
-import { World } from "@/engine/core/ecs/base/World";
-import { Game, GameConfig } from "./Game";
+import { World } from "@/engine/core/base/World";
+import { Game, GameConfig } from "@/engine/templates/Game";
 import { InputSystem } from "@/engine/core/input/InputSystem";
 import { GAME_EVENTS } from "@/engine/core/messaging/MessageTypes";
 

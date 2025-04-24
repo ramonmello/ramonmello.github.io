@@ -1,10 +1,10 @@
-import { System } from "@/engine/core/ecs/base/System";
-import { Entity } from "@/engine/core/ecs/base/Entity";
-import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
+import { System } from "@/engine/core/base/System";
+import { Entity } from "@/engine/core/base/Entity";
+import { TransformComponent } from "@/engine/core/components/TransformComponent";
 import {
   ColliderComponent,
   ColliderType,
-} from "@/engine/core/ecs/components/ColliderComponent";
+} from "@/engine/core/components/ColliderComponent";
 import { COLLISION_EVENTS } from "@/engine/core/messaging/MessageTypes";
 
 export class CollisionSystem extends System {

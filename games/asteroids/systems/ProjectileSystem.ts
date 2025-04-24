@@ -1,11 +1,11 @@
-import { System } from "@/engine/core/ecs/base/System";
-import { Entity } from "@/engine/core/ecs/base/Entity";
-import { World } from "@/engine/core/ecs/base/World";
-import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
-import { RenderComponent } from "@/engine/core/ecs/components/RenderComponent";
-import { PhysicsComponent } from "@/engine/core/ecs/components/PhysicsComponent";
-import { ColliderComponent } from "@/engine/core/ecs/components/ColliderComponent";
-import { ProjectileComponent } from "@/engine/games/asteroids/components/ProjectileComponent";
+import { System } from "@/engine/core/base/System";
+import { Entity } from "@/engine/core/base/Entity";
+import { World } from "@/engine/core/base/World";
+import { TransformComponent } from "@/engine/core/components/TransformComponent";
+import { RenderComponent } from "@/engine/core/components/RenderComponent";
+import { PhysicsComponent } from "@/engine/core/components/PhysicsComponent";
+import { ColliderComponent } from "@/engine/core/components/ColliderComponent";
+import { ProjectileComponent } from "@/games/asteroids/components/ProjectileComponent";
 import {
   PLAYER_EVENTS,
   PROJECTILE_EVENTS,

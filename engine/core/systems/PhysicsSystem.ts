@@ -1,8 +1,8 @@
-import { System } from "@/engine/core/ecs/base/System";
-import { Entity } from "@/engine/core/ecs/base/Entity";
-import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
-import { PhysicsComponent } from "@/engine/core/ecs/components/PhysicsComponent";
-import { getWebGLContext } from "@/engine/core/rendering/WebGLContext";
+import { System } from "@/engine/core/base/System";
+import { Entity } from "@/engine/core/base/Entity";
+import { TransformComponent } from "@/engine/core/components/TransformComponent";
+import { PhysicsComponent } from "@/engine/core/components/PhysicsComponent";
+import { getWebGLContext } from "@/engine/core/rendering/Context";
 import { TARGET_FPS } from "@/engine/core/config/time";
 
 export class PhysicsSystem extends System {

@@ -1,5 +1,5 @@
 import { Entity } from "./Entity";
-import { World } from "@/engine/core/ecs/base/World";
+import { World } from "@/engine/core/base/World";
 
 export abstract class System {
   abstract readonly componentTypes: string[];

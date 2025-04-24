@@ -1,4 +1,4 @@
-import { World } from "@/engine/core/ecs/base/World";
+import { World } from "@/engine/core/base/World";
 import { InputSystem } from "@/engine/core/input/InputSystem";
 
 /**

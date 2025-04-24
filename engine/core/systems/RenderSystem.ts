@@ -1,8 +1,8 @@
-import { System } from "@/engine/core/ecs/base/System";
-import { Entity } from "@/engine/core/ecs/base/Entity";
-import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
-import { RenderComponent } from "@/engine/core/ecs/components/RenderComponent";
-import { getWebGLContext } from "@/engine/core/rendering/WebGLContext";
+import { System } from "@/engine/core/base/System";
+import { Entity } from "@/engine/core/base/Entity";
+import { TransformComponent } from "@/engine/core/components/TransformComponent";
+import { RenderComponent } from "@/engine/core/components/RenderComponent";
+import { getWebGLContext } from "@/engine/core/rendering/Context";
 
 export class RenderSystem extends System {
   /** Define quais componentes uma entidade deve ter para ser processada */

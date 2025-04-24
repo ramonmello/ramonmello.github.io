@@ -2,8 +2,8 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { useKeyboard } from "@/hooks/useKeyboard";
-import { asteroidsGame } from "@/engine/games/asteroids";
-import { GameManager } from "@/engine/GameManager";
+import { asteroidsGame } from "@/games/asteroids";
+import { Manager } from "@/engine/manager";
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -15,7 +15,7 @@ export default function Home() {
     (async () => {
       if (cancelled || !canvasRef.current) return;
 
-      const manager = GameManager.getInstance();
+      const manager = Manager.getInstance();
       manager.setInputHandler(keyboard);
       if (manager.hasActiveGame()) {
         await manager.rebindCanvas(canvasRef.current!);
@@ -27,7 +27,7 @@ export default function Home() {
 
     return () => {
       cancelled = true;
-      GameManager.getInstance().pauseGame();
+      Manager.getInstance().pauseGame();
     };
   }, [keyboard]);
 

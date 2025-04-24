@@ -1,4 +1,4 @@
-import { Component } from "@/engine/core/ecs/base/Component";
+import { Component } from "@/engine/core/base/Component";
 import { Vector2 } from "./TransformComponent";
 
 /**

@@ -1,5 +1,5 @@
-import { Component } from "@/engine/core/ecs/base/Component";
-import { Vector2 } from "@/engine/core/ecs/components/TransformComponent";
+import { Component } from "@/engine/core/base/Component";
+import { Vector2 } from "@/engine/core/components/TransformComponent";
 
 /**
  * Componente que gerencia as propriedades específicas da nave do jogador

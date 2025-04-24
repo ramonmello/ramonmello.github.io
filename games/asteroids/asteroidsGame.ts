@@ -1,9 +1,9 @@
-import { BaseGame } from "@/engine/games/base/BaseGame";
-import { GameConfig } from "@/engine/games/base/Game";
-import { World } from "@/engine/core/ecs/base/World";
-import { PhysicsSystem } from "@/engine/core/ecs/systems/PhysicsSystem";
-import { RenderSystem } from "@/engine/core/ecs/systems/RenderSystem";
-import { Entity } from "@/engine/core/ecs/base/Entity";
+import { BaseGame } from "@/engine/scaffold/BaseGame";
+import { GameConfig } from "@/engine/scaffold/Game";
+import { World } from "@/engine/core/base/World";
+import { PhysicsSystem } from "@/engine/core/systems/PhysicsSystem";
+import { RenderSystem } from "@/engine/core/systems/RenderSystem";
+import { Entity } from "@/engine/core/base/Entity";
 import { ShipControlSystem } from "./systems/ShipControlSystem";
 import { createShipEntity } from "./entities/ShipEntity";
 import { ProjectileSystem } from "./systems/ProjectileSystem";

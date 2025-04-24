@@ -1,15 +1,15 @@
-import { Game, GameConfig } from "@/engine/games/base/Game";
+import { Game, GameConfig } from "@/engine/scaffold/Game";
 import { InputSystem } from "@/engine/core/input/InputSystem";
 import { KeyboardInputSystem } from "@/engine/core/input/KeyboardInputSystem";
 import { MessageBus } from "@/engine/core/messaging/MessageBus";
 import {
   initWebGLContext,
   clearWebGLContext,
-} from "@/engine/core/rendering/WebGLContext";
+} from "@/engine/core/rendering/Context";
 import type { KeyboardHandler } from "@/hooks/useKeyboard";
 
-export class GameManager {
-  private static instance: GameManager;
+export class Manager {
+  private static instance: Manager;
 
   private activeGame?: Game;
 
@@ -21,11 +21,11 @@ export class GameManager {
 
   private isRunning: boolean = false;
 
-  static getInstance(): GameManager {
-    if (!GameManager.instance) {
-      GameManager.instance = new GameManager();
+  static getInstance(): Manager {
+    if (!Manager.instance) {
+      Manager.instance = new Manager();
     }
-    return GameManager.instance;
+    return Manager.instance;
   }
 
   private constructor() {}

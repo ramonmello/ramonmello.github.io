@@ -1,10 +1,10 @@
-import { Entity } from "@/engine/core/ecs/base/Entity";
-import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
-import { RenderComponent } from "@/engine/core/ecs/components/RenderComponent";
-import { PhysicsComponent } from "@/engine/core/ecs/components/PhysicsComponent";
-import { ColliderComponent } from "@/engine/core/ecs/components/ColliderComponent";
+import { Entity } from "@/engine/core/base/Entity";
+import { TransformComponent } from "@/engine/core/components/TransformComponent";
+import { RenderComponent } from "@/engine/core/components/RenderComponent";
+import { PhysicsComponent } from "@/engine/core/components/PhysicsComponent";
+import { ColliderComponent } from "@/engine/core/components/ColliderComponent";
 import { ShipComponent } from "../components/ShipComponent";
-import { getWebGLContext } from "@/engine/core/rendering/WebGLContext";
+import { getWebGLContext } from "@/engine/core/rendering/Context";
 
 /**
  * Cria uma entidade para a nave do jogador

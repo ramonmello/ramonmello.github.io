@@ -1,9 +1,9 @@
-import { System } from "@/engine/core/ecs/base/System";
-import { PhysicsComponent } from "@/engine/core/ecs/components/PhysicsComponent";
-import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
+import { System } from "@/engine/core/base/System";
+import { PhysicsComponent } from "@/engine/core/components/PhysicsComponent";
+import { TransformComponent } from "@/engine/core/components/TransformComponent";
 import { ShipComponent } from "../components/ShipComponent";
-import { AsteroidsGame } from "@/engine/games/asteroids/asteroidsGame";
-import { Entity } from "@/engine/core/ecs/base/Entity";
+import { AsteroidsGame } from "@/games/asteroids/asteroidsGame";
+import { Entity } from "@/engine/core/base/Entity";
 import { PLAYER_EVENTS } from "@/engine/core/messaging/MessageTypes";
 import { TARGET_FPS } from "@/engine/core/config/time";
 
