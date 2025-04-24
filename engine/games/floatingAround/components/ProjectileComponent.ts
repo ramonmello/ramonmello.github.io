@@ -54,12 +54,4 @@ export class ProjectileComponent extends Component {
   hasExpired(): boolean {
     return this.age >= this.lifespan;
   }
-
-  /**
-   * Reduz o tempo de vida do projétil
-   * @param amount Quantidade a reduzir
-   */
-  reduceLifespan(amount: number): void {
-    this.lifespan = Math.max(0, this.lifespan - amount);
-  }
 }

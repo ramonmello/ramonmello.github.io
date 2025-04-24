@@ -39,7 +39,7 @@ export class ProjectileSystem extends System {
   // Configurações dos projéteis
   private static readonly CONFIG = {
     SPEED: 7,
-    LIFESPAN: 60, // em frames
+    LIFESPAN: 120, // em frames
     SIZE: 2,
     OFFSET_DISTANCE: 20, // distância da ponta da nave
   };
@@ -180,7 +180,7 @@ export class ProjectileSystem extends System {
     const { SIZE, LIFESPAN } = ProjectileSystem.CONFIG;
 
     // Cria a entidade do projétil
-    const projectile = new Entity("projectile");
+    const projectile = new Entity();
 
     // Componente de transformação
     const transform = new TransformComponent(position.x, position.y, rotation);
