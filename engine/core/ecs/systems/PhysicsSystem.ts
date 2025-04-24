@@ -3,6 +3,7 @@ import { Entity } from "@/engine/core/ecs/base/Entity";
 import { TransformComponent } from "@/engine/core/ecs/components/TransformComponent";
 import { PhysicsComponent } from "@/engine/core/ecs/components/PhysicsComponent";
 import { getWebGLContext } from "@/engine/core/rendering/WebGLContext";
+import { TARGET_FPS } from "@/engine/core/config/time";
 
 /**
  * Sistema que atualiza propriedades físicas das entidades:
@@ -18,12 +19,12 @@ export class PhysicsSystem extends System {
   /**
    * Atualiza a física de todas as entidades elegíveis
    * @param entities Lista de entidades que possuem TransformComponent e PhysicsComponent
-   * @param deltaTime Tempo desde a última atualização em milissegundos
+   * @param deltaTime Tempo desde a última atualização em segundos
    */
   update(entities: Entity[], deltaTime: number): void {
     // Normalize deltaTime para que o movimento seja independente da taxa de quadros
-    // Usa 16.667 ms como referência (60 FPS)
-    const timeScale = deltaTime / 16.667;
+    // Multiplicando pela taxa de quadros de referência
+    const timeScale = deltaTime * TARGET_FPS;
 
     // Obter dimensões do canvas uma vez para não repetir a chamada
     const { canvas } = getWebGLContext();

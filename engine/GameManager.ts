@@ -99,27 +99,42 @@ export class GameManager {
     if (this.isRunning) return;
 
     this.isRunning = true;
-    this.lastTime = performance.now();
+
+    // 1. Guardamos lastTime em segundos, não mais milissegundos.
+    //    performance.now() retorna ms, então dividimos por 1000.
+    //    Isso padroniza nossa unidade de tempo para toda a Engine.
+    this.lastTime = performance.now() / 1000;
 
     const loop = (timestamp: number) => {
       if (!this.isRunning) return;
 
-      // Calcula delta de tempo em milissegundos
-      const deltaTime = timestamp - this.lastTime;
-      this.lastTime = timestamp;
+      // 2. Convertemos o timestamp (ms) para segundos, para casar
+      //    com a unidade que estamos usando em lastTime.
+      const now = timestamp / 1000;
 
-      // Atualiza o input se existir
+      // 3. Calculamos deltaTime como a diferença, agora em segundos.
+      //    É o tempo decorrido desde o último frame.
+      const deltaTime = now - this.lastTime;
+
+      // 4. Atualizamos lastTime para o instante atual (em s),
+      //    preparando o próximo cálculo de deltaTime.
+      this.lastTime = now;
+
+      // 5. Mantemos a chamada ao sistema de input sem mudança,
+      //    já que ele não depende de deltaTime.
       this.inputSystem?.update();
 
-      // Atualiza o mundo do jogo
+      // 6. Passamos deltaTime em segundos para o World.
+      //    A partir daqui, todos os sistemas receberão tempo em s.
       if (this.activeGame) {
         this.activeGame.getWorld().update(deltaTime);
       }
 
-      // Agenda a próxima iteração
+      // 7. Solicitamos o próximo frame, mantendo o ciclo.
       this.animFrameId = requestAnimationFrame(loop);
     };
 
+    // 8. Iniciamos o primeiro frame. O callback já faz a conversão.
     this.animFrameId = requestAnimationFrame(loop);
   }
 

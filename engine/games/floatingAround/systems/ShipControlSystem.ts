@@ -5,6 +5,7 @@ import { ShipComponent } from "../components/ShipComponent";
 import { FloatingAroundGame } from "../FloatingAroundGame";
 import { Entity } from "@/engine/core/ecs/base/Entity";
 import { PLAYER_EVENTS } from "@/engine/core/messaging/MessageTypes";
+import { TARGET_FPS } from "@/engine/core/config/time";
 
 /**
  * Sistema para controle da nave com teclado
@@ -27,7 +28,7 @@ export class ShipControlSystem extends System {
 
   update(entities: Entity[], deltaTime: number): void {
     // Normaliza o delta de tempo para suavizar o movimento
-    const timeScale = deltaTime / 16.667;
+    const timeScale = deltaTime * TARGET_FPS;
 
     // Obtém o sistema de entrada do jogo ou do mundo
     const inputSystem = this.game?.getInputSystem();
