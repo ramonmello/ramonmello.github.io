@@ -108,6 +108,9 @@ export class RenderSystem extends System {
       // Determinar modo de desenho
       let drawMode: number;
       switch (render.drawMode) {
+        case "line_loop":
+          drawMode = gl.LINE_LOOP;
+          break;
         case "lines":
           drawMode = gl.LINES;
           break;

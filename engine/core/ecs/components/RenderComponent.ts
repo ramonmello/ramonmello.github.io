@@ -35,7 +35,7 @@ export class RenderComponent extends Component {
   zIndex: number = 0;
 
   /** Tipo de primitiva (triangulos, linhas, etc) */
-  drawMode: "triangles" | "lines" | "points" = "triangles";
+  drawMode: "triangles" | "lines" | "line_loop" | "points" = "triangles";
 
   /**
    * Construtor
@@ -94,7 +94,9 @@ export class RenderComponent extends Component {
    * @param mode Modo de desenho ('triangles', 'lines', 'points')
    * @returns Este componente para encadeamento
    */
-  setDrawMode(mode: "triangles" | "lines" | "points"): RenderComponent {
+  setDrawMode(
+    mode: "triangles" | "lines" | "line_loop" | "points"
+  ): RenderComponent {
     this.drawMode = mode;
     return this;
   }
