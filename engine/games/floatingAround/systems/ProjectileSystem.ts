@@ -40,7 +40,7 @@ export class ProjectileSystem extends System {
   private static readonly CONFIG = {
     SPEED: 7,
     LIFESPAN: 1.5, // em frames
-    SIZE: 2,
+    SIZE: 3,
     OFFSET_DISTANCE: 20, // distância da ponta da nave
   };
 
