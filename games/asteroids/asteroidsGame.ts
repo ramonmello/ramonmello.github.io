@@ -7,6 +7,7 @@ import { Entity } from "@/engine/core/base/Entity";
 import { ShipControlSystem } from "./systems/ShipControlSystem";
 import { createShipEntity } from "./entities/ShipEntity";
 import { ProjectileSystem } from "./systems/ProjectileSystem";
+import { createAsteroidEntity } from "./entities/AsteroidEntity";
 
 export interface AsteroidsGameConfig extends GameConfig {
   rotationSpeed: number;
@@ -53,5 +54,9 @@ export class AsteroidsGame extends BaseGame {
 
   protected createEntities(): void {
     this.createShip();
+
+    for (let i = 0; i < 5; i++) {
+      this.world.addEntity(createAsteroidEntity());
+    }
   }
 }
