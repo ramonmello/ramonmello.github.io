@@ -10,6 +10,9 @@ import { ProjectileSystem } from "./systems/ProjectileSystem";
 import { createAsteroidEntity } from "./entities/AsteroidEntity";
 import { CollisionSystem } from "@/engine/core/systems/CollisionSystem";
 import { AsteroidCollisionCleanupSystem } from "./systems/AsteroidCollisionCleanupSystem";
+import { ParticleSystem } from "@/engine/core/systems/ParticleSystem";
+import { ExplosionSpawnSystem } from "./systems/ExplosionSpawnSystem";
+import { EmitterRenderSystem } from "@/engine/core/systems/EmitterRenderSystem";
 
 export interface AsteroidsGameConfig extends GameConfig {
   rotationSpeed: number;
@@ -43,6 +46,12 @@ export class AsteroidsGame extends BaseGame {
 
   protected createSystems(): void {
     this.world.addSystem(new PhysicsSystem());
+
+    /* efeitos */
+    this.world.addSystem(new ParticleSystem()); // novo
+    this.world.addSystem(new ExplosionSpawnSystem(this.world)); // novo
+    this.world.addSystem(new EmitterRenderSystem()); // novo
+
     this.world.addSystem(new RenderSystem(true, [0, 0, 0.1, 0]));
 
     this.world.addSystem(new ShipControlSystem(this));

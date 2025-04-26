@@ -3,10 +3,12 @@ import { World } from "@/engine/core/base/World";
 import { Entity } from "@/engine/core/base/Entity";
 import {
   COLLISION_EVENTS,
+  PROJECTILE_EVENTS,
   WORLD_EVENTS,
 } from "@/engine/core/messaging/MessageTypes";
 import { ProjectileComponent } from "../components/ProjectileComponent";
 import { MessageData } from "@/engine/core/messaging/MessageBus";
+import { TransformComponent } from "@/engine/core/components/TransformComponent";
 
 export class AsteroidCollisionCleanupSystem extends System {
   readonly componentTypes: string[] = [];
@@ -40,6 +42,19 @@ export class AsteroidCollisionCleanupSystem extends System {
 
     this.pendingRemovals.add(proj.id);
     this.pendingRemovals.add(astro.id);
+
+    const astroTransform = astro.getComponent<TransformComponent>(
+      TransformComponent.TYPE
+    );
+
+    if (astroTransform && this.world) {
+      this.world.emit(PROJECTILE_EVENTS.HIT, {
+        position: {
+          x: astroTransform.position.x,
+          y: astroTransform.position.y,
+        },
+      });
+    }
   };
 
   private flushRemovals = () => {
