@@ -8,6 +8,8 @@ import { ShipControlSystem } from "./systems/ShipControlSystem";
 import { createShipEntity } from "./entities/ShipEntity";
 import { ProjectileSystem } from "./systems/ProjectileSystem";
 import { createAsteroidEntity } from "./entities/AsteroidEntity";
+import { CollisionSystem } from "@/engine/core/systems/CollisionSystem";
+import { AsteroidCollisionCleanupSystem } from "./systems/AsteroidCollisionCleanupSystem";
 
 export interface AsteroidsGameConfig extends GameConfig {
   rotationSpeed: number;
@@ -45,6 +47,9 @@ export class AsteroidsGame extends BaseGame {
 
     this.world.addSystem(new ShipControlSystem(this));
     this.world.addSystem(new ProjectileSystem(this.world));
+
+    this.world.addSystem(new CollisionSystem());
+    this.world.addSystem(new AsteroidCollisionCleanupSystem());
   }
 
   private createShip(): void {
@@ -52,11 +57,14 @@ export class AsteroidsGame extends BaseGame {
     this.world.addEntity(this.shipEntity);
   }
 
-  protected createEntities(): void {
-    this.createShip();
-
+  private createAsteroids(): void {
     for (let i = 0; i < 5; i++) {
       this.world.addEntity(createAsteroidEntity());
     }
+  }
+
+  protected createEntities(): void {
+    this.createShip();
+    this.createAsteroids();
   }
 }

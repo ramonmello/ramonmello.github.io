@@ -3,6 +3,7 @@ import { TransformComponent } from "@/engine/core/components/TransformComponent"
 import { PhysicsComponent } from "@/engine/core/components/PhysicsComponent";
 import { RenderComponent } from "@/engine/core/components/RenderComponent";
 import { getWebGLContext } from "@/engine/core/rendering/Context";
+import { ColliderComponent } from "@/engine/core/components/ColliderComponent";
 
 function generateAsteroidVertices(size: number, points = 8): Float32Array {
   const verts: number[] = [];
@@ -58,6 +59,11 @@ export function createAsteroidEntity(size = 30): Entity {
       /* maxSpeed */ speed
     ).setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed)
   );
+
+  /* Collider */
+  const collider = ColliderComponent.createCircle(size);
+
+  e.addComponent(collider);
 
   /* Render */
   e.addComponent(

@@ -143,7 +143,7 @@ export class ProjectileSystem extends System {
     render.setColor(1, 1, 1, 1);
 
     const collider = ColliderComponent.createCircle(SIZE);
-    collider.setTrigger(true);
+    // collider.setTrigger(true);
 
     const projectileComponent = new ProjectileComponent(
       LIFESPAN,
