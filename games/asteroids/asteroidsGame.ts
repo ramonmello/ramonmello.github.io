@@ -9,7 +9,7 @@ import { createShipEntity } from "./entities/ShipEntity";
 import { ProjectileSystem } from "./systems/ProjectileSystem";
 import { createAsteroidEntity } from "./entities/AsteroidEntity";
 import { CollisionSystem } from "@/engine/core/systems/CollisionSystem";
-import { AsteroidCollisionCleanupSystem } from "./systems/AsteroidCollisionCleanupSystem";
+import { AsteroidCollisionSystem } from "./systems/AsteroidCollisionCleanupSystem";
 import { ParticleSystem } from "@/engine/core/systems/ParticleSystem";
 import { ExplosionSpawnSystem } from "./systems/ExplosionSpawnSystem";
 import { EmitterRenderSystem } from "@/engine/core/systems/EmitterRenderSystem";
@@ -58,7 +58,7 @@ export class AsteroidsGame extends BaseGame {
     this.world.addSystem(new ProjectileSystem(this.world));
 
     this.world.addSystem(new CollisionSystem());
-    this.world.addSystem(new AsteroidCollisionCleanupSystem());
+    this.world.addSystem(new AsteroidCollisionSystem());
   }
 
   private createShip(): void {

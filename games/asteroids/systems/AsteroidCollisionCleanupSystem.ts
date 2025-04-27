@@ -3,14 +3,16 @@ import { World } from "@/engine/core/base/World";
 import { Entity } from "@/engine/core/base/Entity";
 import {
   COLLISION_EVENTS,
-  PROJECTILE_EVENTS,
   WORLD_EVENTS,
+  PROJECTILE_EVENTS,
+  PLAYER_EVENTS,
 } from "@/engine/core/messaging/MessageTypes";
 import { ProjectileComponent } from "../components/ProjectileComponent";
+import { ShipComponent } from "../components/ShipComponent";
 import { MessageData } from "@/engine/core/messaging/MessageBus";
 import { TransformComponent } from "@/engine/core/components/TransformComponent";
 
-export class AsteroidCollisionCleanupSystem extends System {
+export class AsteroidCollisionSystem extends System {
   readonly componentTypes: string[] = [];
 
   priority = 0;
@@ -19,45 +21,76 @@ export class AsteroidCollisionCleanupSystem extends System {
 
   init(world: World): void {
     this.world = world;
-    this.world.on(COLLISION_EVENTS.RESOLVE, this.handleResolve);
-    this.world.on(WORLD_EVENTS.POST_UPDATE, this.flushRemovals);
+
+    world.on(COLLISION_EVENTS.DETECT, this.handleCollision);
+    world.on(WORLD_EVENTS.POST_UPDATE, this.flushRemovals);
   }
 
   update(): void {}
 
-  private handleResolve = (data: MessageData) => {
+  private isAsteroid = (e: Entity) => e.name === "Asteroid";
+
+  private handleCollision = (data: MessageData): void => {
     const entityA = data.entityA as Entity;
     const entityB = data.entityB as Entity;
 
-    const aIsProj = !!entityA.getComponent<ProjectileComponent>(
+    const projA = entityA.getComponent<ProjectileComponent>(
       ProjectileComponent.TYPE
     );
-    const bIsProj = !!entityB.getComponent<ProjectileComponent>(
+    const projB = entityB.getComponent<ProjectileComponent>(
       ProjectileComponent.TYPE
     );
-    if (aIsProj === bIsProj) return;
 
-    const proj = aIsProj ? entityA : entityB;
-    const astro = aIsProj ? entityB : entityA;
+    if (
+      (projA && this.isAsteroid(entityB)) ||
+      (projB && this.isAsteroid(entityA))
+    ) {
+      const projectile = projA ? entityA : entityB;
+      const asteroid = this.isAsteroid(entityA) ? entityA : entityB;
 
-    this.pendingRemovals.add(proj.id);
-    this.pendingRemovals.add(astro.id);
+      this.markForRemoval(projectile);
+      this.markForRemoval(asteroid);
 
-    const astroTransform = astro.getComponent<TransformComponent>(
-      TransformComponent.TYPE
-    );
+      const t = asteroid.getComponent<TransformComponent>(
+        TransformComponent.TYPE
+      );
+      if (t) {
+        this.world?.emit(PROJECTILE_EVENTS.HIT, {
+          position: { x: t.position.x, y: t.position.y },
+          projectile,
+          asteroid,
+        });
+      }
+      return;
+    }
 
-    if (astroTransform && this.world) {
-      this.world.emit(PROJECTILE_EVENTS.HIT, {
-        position: {
-          x: astroTransform.position.x,
-          y: astroTransform.position.y,
-        },
+    const shipA = entityA.getComponent<ShipComponent>(ShipComponent.TYPE);
+    const shipB = entityB.getComponent<ShipComponent>(ShipComponent.TYPE);
+
+    if (
+      (shipA && this.isAsteroid(entityB)) ||
+      (shipB && this.isAsteroid(entityA))
+    ) {
+      const ship = shipA ? entityA : entityB;
+      const shipComp = shipA ? shipA : shipB!;
+
+      if (shipComp.invincible) return; // colisão ignorada se invencível
+
+      this.markForRemoval(ship);
+
+      const s = ship.getComponent<TransformComponent>(TransformComponent.TYPE);
+
+      ship.emit(PLAYER_EVENTS.DIE, {
+        position: { x: s?.position.x, y: s?.position.y },
       });
     }
   };
 
-  private flushRemovals = () => {
+  private markForRemoval(entity: Entity): void {
+    this.pendingRemovals.add(entity.id);
+  }
+
+  private flushRemovals = (): void => {
     for (const id of this.pendingRemovals) {
       this.world?.removeEntity(id);
     }

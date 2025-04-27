@@ -3,7 +3,10 @@ import { World } from "@/engine/core/base/World";
 import { Entity } from "@/engine/core/base/Entity";
 import { TransformComponent } from "@/engine/core/components/TransformComponent";
 import { ParticleEmitterComponent } from "@/engine/core/components/ParticleEmitterComponent";
-import { PROJECTILE_EVENTS } from "@/engine/core/messaging/MessageTypes";
+import {
+  PLAYER_EVENTS,
+  PROJECTILE_EVENTS,
+} from "@/engine/core/messaging/MessageTypes";
 import { MessageData } from "@/engine/core/messaging/MessageBus";
 import { EmitterConfig } from "@/engine/core/rendering/particles";
 
@@ -24,6 +27,10 @@ export class ExplosionSpawnSystem extends System {
   constructor(protected world: World) {
     super();
     this.world.on(PROJECTILE_EVENTS.HIT, (d) => {
+      this.spawn((d as HitData).position);
+    });
+
+    this.world.on(PLAYER_EVENTS.DIE, (d) => {
       this.spawn((d as HitData).position);
     });
   }
