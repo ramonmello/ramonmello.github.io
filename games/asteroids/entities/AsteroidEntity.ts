@@ -4,6 +4,7 @@ import { PhysicsComponent } from "@/engine/core/components/PhysicsComponent";
 import { RenderComponent } from "@/engine/core/components/RenderComponent";
 import { getWebGLContext } from "@/engine/core/rendering/Context";
 import { ColliderComponent } from "@/engine/core/components/ColliderComponent";
+import { AsteroidComponent } from "../components/AsteroidComponent";
 
 function generateAsteroidVertices(size: number, points = 8): Float32Array {
   const verts: number[] = [];
@@ -46,6 +47,8 @@ export function createAsteroidEntity(size = 30): Entity {
   const e = new Entity(`asteroid_${crypto.randomUUID()}`, "Asteroid");
 
   e.addComponent(new TransformComponent(x, y, Math.random() * Math.PI * 2));
+
+  e.addComponent(new AsteroidComponent(size));
 
   /* Physics */
   // TODO: Verify if this work with 30 FPS (change to use deltaTime)

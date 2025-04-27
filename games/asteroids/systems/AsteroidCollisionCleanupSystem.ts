@@ -6,11 +6,13 @@ import {
   WORLD_EVENTS,
   PROJECTILE_EVENTS,
   PLAYER_EVENTS,
+  ENTITY_EVENTS,
 } from "@/engine/core/messaging/MessageTypes";
 import { ProjectileComponent } from "../components/ProjectileComponent";
 import { ShipComponent } from "../components/ShipComponent";
 import { MessageData } from "@/engine/core/messaging/MessageBus";
 import { TransformComponent } from "@/engine/core/components/TransformComponent";
+import { AsteroidComponent } from "../components/AsteroidComponent";
 
 export class AsteroidCollisionSystem extends System {
   readonly componentTypes: string[] = [];
@@ -28,7 +30,7 @@ export class AsteroidCollisionSystem extends System {
 
   update(): void {}
 
-  private isAsteroid = (e: Entity) => e.name === "Asteroid";
+  private isAsteroid = (e: Entity) => e.hasComponent(AsteroidComponent.TYPE);
 
   private handleCollision = (data: MessageData): void => {
     const entityA = data.entityA as Entity;
@@ -92,7 +94,13 @@ export class AsteroidCollisionSystem extends System {
 
   private flushRemovals = (): void => {
     for (const id of this.pendingRemovals) {
-      this.world?.removeEntity(id);
+      const entity = this.world?.getEntity(id);
+      if (entity) {
+        if (this.isAsteroid(entity)) {
+          this.world?.emit(ENTITY_EVENTS.DESTROYED, { entity });
+        }
+        this.world?.removeEntity(id);
+      }
     }
     this.pendingRemovals.clear();
   };
