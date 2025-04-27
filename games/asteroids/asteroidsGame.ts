@@ -13,6 +13,7 @@ import { ParticleSystem } from "@/engine/core/systems/ParticleSystem";
 import { ExplosionSpawnSystem } from "./systems/ExplosionSpawnSystem";
 import { EmitterRenderSystem } from "@/engine/core/systems/EmitterRenderSystem";
 import { WaveSystem } from "./systems/WaveSystem";
+import { PlayerRespawnSystem } from "./systems/PlayerRespawnSystem";
 
 export interface AsteroidsGameConfig extends GameConfig {
   rotationSpeed: number;
@@ -61,6 +62,7 @@ export class AsteroidsGame extends BaseGame {
     this.world.addSystem(new AsteroidCollisionSystem());
 
     this.world.addSystem(new WaveSystem());
+    this.world.addSystem(new PlayerRespawnSystem());
   }
 
   private createShip(): void {
