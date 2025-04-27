@@ -13,8 +13,8 @@ export function createShipEntity(): Entity {
 
   const transform = new TransformComponent(
     canvas.width / 2,
-    canvas.height / 2,
-    0
+    canvas.height / 2 + 200,
+    Math.PI
   );
 
   const shipVertices = new Float32Array([0, 22.5, -7.5, -15, 7.5, -15]);
