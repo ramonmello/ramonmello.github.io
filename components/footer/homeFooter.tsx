@@ -1,8 +1,10 @@
 import Image from "next/image";
+import { version } from "@/package.json";
 
 export function HomeFooter() {
   return (
     <footer className="flex self-end w-full">
+      <div className="font-lores-12 text-sm self-end">v{version}</div>
       <div className="inline-block ml-auto">
         <a
           className="flex mb-4"

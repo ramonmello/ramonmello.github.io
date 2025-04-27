@@ -11,7 +11,7 @@ import { AsteroidComponent } from "../components/AsteroidComponent";
 
 export class WaveSystem extends System {
   readonly componentTypes: string[] = [];
-  private baseAsteroids = 8;
+  private baseAsteroids = 1;
   private wave = 0;
   priority: number = 130;
 
@@ -35,7 +35,7 @@ export class WaveSystem extends System {
   }
 
   private startNewWave(world: World): void {
-    const increase = ++this.wave * 2;
+    const increase = ++this.wave * 3;
     const n = this.baseAsteroids + increase;
     for (let i = 0; i < n; i++) {
       world.addEntity(createAsteroidEntity());

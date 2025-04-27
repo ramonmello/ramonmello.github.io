@@ -13,7 +13,7 @@ export function createShipEntity(): Entity {
 
   const transform = new TransformComponent(
     canvas.width / 2,
-    canvas.height / 2 + 200,
+    canvas.height - 168, // bottom-14 (14 * 4 = 56px from bottom)
     Math.PI
   );
 
