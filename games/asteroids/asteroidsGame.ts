@@ -53,7 +53,7 @@ export class AsteroidsGame extends BaseGame {
     this.world.addSystem(new ExplosionSpawnSystem(this.world)); // novo
     this.world.addSystem(new EmitterRenderSystem()); // novo
 
-    this.world.addSystem(new RenderSystem(true, [0, 0, 0.1, 0]));
+    this.world.addSystem(new RenderSystem(true, [0, 0, 0, 0]));
 
     this.world.addSystem(new ShipControlSystem(this));
     this.world.addSystem(new ProjectileSystem(this.world));

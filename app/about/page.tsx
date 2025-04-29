@@ -76,7 +76,7 @@ const avatarBlurDataURL =
 
 export default function About() {
   return (
-    <div className="max-w-6xl scroll-smooth mt-16" id="about">
+    <div className="max-w-6xl scroll-smooth mt-16">
       <div className="lg:flex lg:justify-between lg:gap-4">
         <div className="lg:sticky lg:h-[calc(100vh-345px)] lg:flex lg:flex-col top-36 w-full lg:w-6/12">
           <Image
@@ -128,7 +128,9 @@ export default function About() {
         </div>
         <div className="w-full lg:w-7/12 text-neutral-400">
           <section className="text-neutral-400">
-            <h2 className="sr-only">About me</h2>
+            <h2 className="sr-only" id="about">
+              About me
+            </h2>
             <p>
               Sou desenvolvedor front-end especializado em React e Next.js, com
               mais de sete anos de estrada construindo MVPs que ligam a
@@ -144,7 +146,7 @@ export default function About() {
             </p>
           </section>
           <section id="projects" className="text-neutral-400">
-            <h2 className="text-2xl font-bold text-white mt-14 mb-8">
+            <h2 className="text-2xl font-bold text-white pt-14 mb-8">
               Projetos
             </h2>
             <div className="mt-8 flex flex-col gap-12">
@@ -161,7 +163,7 @@ export default function About() {
               ))}
             </div>
           </section>
-          <section id="experience" className="mt-14 text-neutral-400">
+          <section id="experience" className="pt-14 text-neutral-400">
             <h2 className="text-2xl font-bold text-white mb-8">Experiência</h2>
             {experience.map((job) => (
               <div
