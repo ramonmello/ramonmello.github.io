@@ -50,24 +50,34 @@ const experience = [
 
 const projects = [
   {
-    title: "Órbita",
+    title: "Orbita",
     description:
       "Hub de conteúdo do ecossistema Sens Public que centraliza artigos, notícias e eventos em um único domínio, usando busca semântica Algolia para conectar temas e projetos.",
+    technologies: [
+      "Next.js",
+      "Algolia",
+      "Tailwind CSS",
+      "Radix UI",
+      "Shadcn UI",
+    ],
+  },
+  {
+    title: "Engine 2D (nome provisório, aceito sugestões!)",
+    description:
+      "Projeto experimental que transforma páginas web em ambientes gamificados: o usuário navega como em um jogo, enquanto elementos da interface e do mundo 2D reagem de forma integrada, apagando a linha entre conteúdo e gameplay.",
+    technologies: ["Canvas API", "WebGL", "Typescript"],
   },
   {
     title: "Synkinator",
     description:
       "Ferramenta em desenvolvimento que automatiza o processo de ingest de fotos e vídeos, permitindo fluxos personalizados de importação, organização e backup para fotógrafos e videomakers.",
+    technologies: ["React", "Tauri", "TanStack Router"],
   },
   {
     title: "Crigo",
     description:
       "Plataforma que gera, em poucos cliques, milhares de variações de anúncios combinando criativos, headlines e copies, exportando diretamente para Google Ads Editor e Meta Ads Import.",
-  },
-  {
-    title: "Engine 2D (nome provisório, aceito sugestões!)",
-    description:
-      "Experimento pessoal focado em criar experiências interativas dentro de páginas web: o usuário navega e interage como se estivesse em um jogo, com elementos do site e do mundo 2D respondendo de forma integrada, borrando as fronteiras entre conteúdo e gameplay.",
+    technologies: ["React", "Shadcn UI", "TanStack Router"],
   },
 ];
 
@@ -78,7 +88,7 @@ export default function About() {
   return (
     <div className="max-w-6xl scroll-smooth mt-16">
       <div className="lg:flex lg:justify-between lg:gap-4">
-        <div className="lg:sticky lg:h-[calc(100vh-345px)] lg:flex lg:flex-col top-36 w-full lg:w-6/12">
+        <div className="mb-11 md:mb-0 lg:sticky lg:h-[calc(100vh-345px)] lg:flex lg:flex-col top-36 w-full lg:w-6/12">
           <Image
             src="/ramon-avatar.jpg"
             alt="Ramon Mello - Front-end Developer"
@@ -159,6 +169,16 @@ export default function About() {
                     {project.title}
                   </h3>
                   <p className="mt-2">{project.description}</p>
+                  <div className="flex gap-2 mt-4">
+                    {project.technologies.map((tech) => (
+                      <span
+                        key={tech}
+                        className="text-sm bg-neutral-800 px-2 py-1 rounded"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
                 </article>
               ))}
             </div>
